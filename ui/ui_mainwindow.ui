@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>688</width>
+    <height>491</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>0</y>
+      <width>186</width>
+      <height>306</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <widget class="QComboBox" name="comboBox_SPort">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>65</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>65</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>SerialPort</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>105</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>BaudRate</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_BRate">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>105</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_BSize">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>145</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>145</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>ByteSize</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_SBit">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>185</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>185</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>StopBits</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_PBit">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>225</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>225</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>ParityBits </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>25</y>
+       <width>66</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>CheckPort</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_Check">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>25</y>
+       <width>91</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Check</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_Open">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>265</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_Close">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>265</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>4</x>
+      <y>310</y>
+      <width>681</width>
+      <height>136</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Send</string>
+    </property>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>20</y>
+       <width>566</width>
+       <height>116</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="single">
+      <attribute name="title">
+       <string>Single</string>
+      </attribute>
+      <widget class="QTextEdit" name="textEdit_SSend">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>560</width>
+         <height>86</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="multi">
+      <attribute name="title">
+       <string>Multi</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="protocol">
+      <attribute name="title">
+       <string>Protocol</string>
+      </attribute>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="pushButton_Send">
+     <property name="geometry">
+      <rect>
+       <x>585</x>
+       <y>50</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Send</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_SClear">
+     <property name="geometry">
+      <rect>
+       <x>585</x>
+       <y>95</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_Newline">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>19</y>
+       <width>79</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>NewLine</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_SHexmode">
+     <property name="geometry">
+      <rect>
+       <x>585</x>
+       <y>20</y>
+       <width>79</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>HexMode</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_Sendsize">
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>20</y>
+       <width>86</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>S: </string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>0</y>
+      <width>483</width>
+      <height>306</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Receive</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <widget class="QTextEdit" name="textEdit_Receive">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>20</y>
+       <width>476</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_RHexmode">
+     <property name="geometry">
+      <rect>
+       <x>387</x>
+       <y>275</y>
+       <width>79</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>HexMode</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_RClear">
+     <property name="geometry">
+      <rect>
+       <x>295</x>
+       <y>275</y>
+       <width>71</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_Recsize">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>280</y>
+       <width>86</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>R: </string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>688</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resrc/resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

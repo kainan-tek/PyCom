@@ -1,0 +1,5 @@
+﻿Release Note:
+
+v1.0.0:
+    initial version.
+    implement with pyside6 and pyserial libs.
