@@ -18,5 +18,5 @@ AboutInfo = f"""
     Version: {GuiInfo["version"]}
 
     Support: {GuiInfo["email"]}
-
+    Repo: https://github.com/kainan2020/PyCom
 """
