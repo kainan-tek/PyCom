@@ -201,6 +201,8 @@ class MainWindow(QMainWindow):
     def send_set_hexmode(self):
         hexmode_state = self.ui.checkBox_SHexmode.isChecked()
         text = self.ui.textEdit_SSend.toPlainText()
+        if not text:
+            return False
         if hexmode_state:
             if not self.is_hex_mode(text):
                 text = text.encode("gbk").hex(" ")
@@ -209,7 +211,11 @@ class MainWindow(QMainWindow):
         else:
             if self.is_hex_mode(text):
                 text = text.replace(" ", "")
-                bytes_text = bytes.fromhex(text)
+                try:
+                    bytes_text = bytes.fromhex(text)
+                except ValueError:
+                    self.log.error("the datas can not be cast from hex mode")
+                    return False
                 self.ui.textEdit_SSend.clear()
                 self.ui.textEdit_SSend.insertPlainText(bytes_text.decode("gbk"))
 
@@ -217,17 +223,18 @@ class MainWindow(QMainWindow):
         self.mutex.lock()
         hexmode_state = self.ui.checkBox_RHexmode.isChecked()
         text = self.ui.textEdit_Receive.toPlainText()
+        if not text:
+            self.mutex.unlock()
+            return False
         if hexmode_state:
             if not self.is_hex_mode(text):
                 text = text.encode("gbk").hex(" ")
                 self.ui.textEdit_Receive.clear()
                 self.ui.textEdit_Receive.insertPlainText(text)
-                self.ui.textEdit_Receive.insertPlainText(" ")
-                self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
             else:
                 self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
-                self.ui.textEdit_Receive.insertPlainText(" ")
-                self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
+            self.ui.textEdit_Receive.insertPlainText(" ")
+            self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
         else:
             if self.is_hex_mode(text):
                 text = text.replace(" ", "")
