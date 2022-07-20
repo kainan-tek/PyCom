@@ -10,6 +10,24 @@
     <height>491</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>688</width>
+    <height>491</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>688</width>
+    <height>491</height>
+   </size>
+  </property>
   <property name="font">
    <font>
     <pointsize>10</pointsize>
@@ -338,7 +356,7 @@
     <widget class="QCheckBox" name="checkBox_Newline">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>493</x>
        <y>19</y>
        <width>79</width>
        <height>21</height>
@@ -361,17 +379,30 @@
       <string>HexMode</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_Sendsize">
+    <widget class="QLineEdit" name="lineEdit_Cycle">
      <property name="geometry">
       <rect>
-       <x>217</x>
+       <x>400</x>
        <y>20</y>
-       <width>91</width>
+       <width>71</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>S: 0</string>
+      <string>1000</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_Cycle">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>20</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cycle(ms)</string>
      </property>
     </widget>
    </widget>
@@ -415,7 +446,7 @@
     <widget class="QCheckBox" name="checkBox_RHexmode">
      <property name="geometry">
       <rect>
-       <x>387</x>
+       <x>388</x>
        <y>275</y>
        <width>79</width>
        <height>26</height>
@@ -436,19 +467,6 @@
      </property>
      <property name="text">
       <string>Clear</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_Recsize">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>280</y>
-       <width>91</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>R: 0</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_RSave">
@@ -489,6 +507,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionOpen_File"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -514,6 +534,11 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionOpen_File">
+   <property name="text">
+    <string>Open File</string>
    </property>
   </action>
  </widget>

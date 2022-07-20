@@ -17,9 +17,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
-    QGroupBox, QLabel, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QTabWidget, QTextEdit, QWidget)
+    QGroupBox, QLabel, QLineEdit, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTabWidget, QTextEdit, QWidget)
 
 
 class Ui_MainWindow(object):
@@ -27,6 +27,13 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(688, 491)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QSize(688, 491))
+        MainWindow.setMaximumSize(QSize(688, 491))
         font = QFont()
         font.setPointSize(10)
         MainWindow.setFont(font)
@@ -34,6 +41,8 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(u"actionAbout")
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
+        self.actionOpen_File = QAction(MainWindow)
+        self.actionOpen_File.setObjectName(u"actionOpen_File")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.groupBox = QGroupBox(self.centralwidget)
@@ -124,13 +133,16 @@ class Ui_MainWindow(object):
         self.pushButton_SClear.setGeometry(QRect(585, 95, 81, 31))
         self.checkBox_Newline = QCheckBox(self.groupBox_2)
         self.checkBox_Newline.setObjectName(u"checkBox_Newline")
-        self.checkBox_Newline.setGeometry(QRect(490, 19, 79, 21))
+        self.checkBox_Newline.setGeometry(QRect(493, 19, 79, 21))
         self.checkBox_SHexmode = QCheckBox(self.groupBox_2)
         self.checkBox_SHexmode.setObjectName(u"checkBox_SHexmode")
         self.checkBox_SHexmode.setGeometry(QRect(585, 20, 79, 21))
-        self.label_Sendsize = QLabel(self.groupBox_2)
-        self.label_Sendsize.setObjectName(u"label_Sendsize")
-        self.label_Sendsize.setGeometry(QRect(217, 20, 91, 21))
+        self.lineEdit_Cycle = QLineEdit(self.groupBox_2)
+        self.lineEdit_Cycle.setObjectName(u"lineEdit_Cycle")
+        self.lineEdit_Cycle.setGeometry(QRect(400, 20, 71, 21))
+        self.checkBox_Cycle = QCheckBox(self.groupBox_2)
+        self.checkBox_Cycle.setObjectName(u"checkBox_Cycle")
+        self.checkBox_Cycle.setGeometry(QRect(320, 20, 81, 21))
         self.groupBox_21 = QGroupBox(self.centralwidget)
         self.groupBox_21.setObjectName(u"groupBox_21")
         self.groupBox_21.setGeometry(QRect(200, 0, 483, 306))
@@ -144,13 +156,10 @@ class Ui_MainWindow(object):
         self.textEdit_Receive.setReadOnly(True)
         self.checkBox_RHexmode = QCheckBox(self.groupBox_21)
         self.checkBox_RHexmode.setObjectName(u"checkBox_RHexmode")
-        self.checkBox_RHexmode.setGeometry(QRect(387, 275, 79, 26))
+        self.checkBox_RHexmode.setGeometry(QRect(388, 275, 79, 26))
         self.pushButton_RClear = QPushButton(self.groupBox_21)
         self.pushButton_RClear.setObjectName(u"pushButton_RClear")
         self.pushButton_RClear.setGeometry(QRect(295, 275, 71, 26))
-        self.label_Recsize = QLabel(self.groupBox_21)
-        self.label_Recsize.setObjectName(u"label_Recsize")
-        self.label_Recsize.setGeometry(QRect(20, 280, 91, 21))
         self.pushButton_RSave = QPushButton(self.groupBox_21)
         self.pushButton_RSave.setObjectName(u"pushButton_RSave")
         self.pushButton_RSave.setGeometry(QRect(205, 275, 71, 26))
@@ -172,6 +181,8 @@ class Ui_MainWindow(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
+        self.menuFile.addAction(self.actionOpen_File)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuAbout.addAction(self.actionAbout)
 
@@ -187,6 +198,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.actionOpen_File.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"SerialPort", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"BaudRate", None))
@@ -205,11 +217,11 @@ class Ui_MainWindow(object):
         self.pushButton_SClear.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.checkBox_Newline.setText(QCoreApplication.translate("MainWindow", u"NewLine", None))
         self.checkBox_SHexmode.setText(QCoreApplication.translate("MainWindow", u"HexMode", None))
-        self.label_Sendsize.setText(QCoreApplication.translate("MainWindow", u"S: 0", None))
+        self.lineEdit_Cycle.setText(QCoreApplication.translate("MainWindow", u"1000", None))
+        self.checkBox_Cycle.setText(QCoreApplication.translate("MainWindow", u"Cycle(ms)", None))
         self.groupBox_21.setTitle(QCoreApplication.translate("MainWindow", u"Receive", None))
         self.checkBox_RHexmode.setText(QCoreApplication.translate("MainWindow", u"HexMode", None))
         self.pushButton_RClear.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
-        self.label_Recsize.setText(QCoreApplication.translate("MainWindow", u"R: 0", None))
         self.pushButton_RSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuAbout.setTitle(QCoreApplication.translate("MainWindow", u"About", None))
