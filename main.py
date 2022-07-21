@@ -8,8 +8,8 @@ import logwrapper as log
 import globalvar as gl
 import resrc.resource as res
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog
-from PySide6.QtGui import QIcon, QPixmap, QTextCursor
-from PySide6.QtCore import QThread, QTimer, Signal, QMutex
+from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
+from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
 from ui.ui_mainwindow import Ui_MainWindow
 
 
@@ -46,6 +46,8 @@ class MainWindow(QMainWindow):
 
         self.ui.textEdit_SSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
         self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
+        self.ui.textEdit_SSend.installEventFilter(self)
+        self.ui.lineEdit_Cycle.setValidator(QIntValidator())
 
         self.ui.comboBox_BRate.addItems(gl.SerialInfo["baudrate"])
         self.ui.comboBox_BRate.setCurrentText('115200')
@@ -93,10 +95,6 @@ class MainWindow(QMainWindow):
         self.ser_instance.stopbits = int(self.ui.comboBox_SBit.currentText().strip())
         self.ser_instance.parity = self.ui.comboBox_PBit.currentText().strip()[0]
         self.ser_instance.timeout = gl.SerialInfo["timeout"]
-        # if len(self.ui.comboBox_SBit.currentText()) > 1:
-        #     self.ser_instance.stopbits = float(self.ui.comboBox_SBit.currentText().strip())
-        # else:
-        #     self.ser_instance.stopbits = int(self.ui.comboBox_SBit.currentText().strip())
 
         if not self.ser_instance.port:
             self.log.info("No port be selected")
@@ -119,9 +117,8 @@ class MainWindow(QMainWindow):
 
     def close_port(self):
         if self.ser_instance.isOpen():
-            self.send_timer.stop()
-            self.ui.checkBox_Cycle.setChecked(False)
-            self.ui.lineEdit_Cycle.setEnabled(True)
+            if self.ui.checkBox_Cycle.isChecked():
+                self.ui.checkBox_Cycle.click()
             self.recthread.close_flag = True  # triger the serial close function in receive thread
             # self.ser_instance.close()  # the serial readall function in receive thread may crash
 
@@ -139,21 +136,26 @@ class MainWindow(QMainWindow):
             self.msgbox.information(self, "Info", "Please open a serial port first")
             return False
         if self.ui.checkBox_SHexmode.isChecked():
-            if not self.is_hex_mode(text):
-                self.msgbox.warning(self, "Warning", "not correct hex format")
+            if not self.is_send_hex_mode(text):
+                if self.ui.checkBox_Cycle.isChecked():
+                    self.ui.checkBox_Cycle.click()
+                self.msgbox.warning(self, "Warning", "Not correct hex format")
                 return False
-            text_list = text.strip().split(" ")
-            int_list = [int(item, 16) for item in text_list]
+            post_text = text.replace(" ", "")
+            text_size = len(post_text)
+            int_list = [int(post_text[i:i+2], 16) for i in range(0, text_size, 2)]
             if newline_state:
-                int_list.extend([13, 10])  # add \r\n
-            text = bytes(int_list)
+                int_list.extend([13, 10])
+                bytes_text = bytes(int_list)
+            else:
+                bytes_text = bytes(int_list)
         else:
             if newline_state:
-                text = (text+'\r\n').encode("gbk")
+                bytes_text = (text+'\r\n').encode("gbk")
             else:
-                text = text.encode("gbk")
+                bytes_text = text.encode("gbk")
 
-        sendsize = self.ser_instance.write(text)
+        sendsize = self.ser_instance.write(bytes_text)
         self.total_sendsize = self.total_sendsize+sendsize
         self.statusbar_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}"
         self.ui.statusbar.showMessage(self.statusbar_text)
@@ -204,20 +206,35 @@ class MainWindow(QMainWindow):
         if not text:
             return False
         if hexmode_state:
-            if not self.is_hex_mode(text):
-                text = text.encode("gbk").hex(" ")
-                self.ui.textEdit_SSend.clear()
-                self.ui.textEdit_SSend.insertPlainText(text)
+            text = text.encode("gbk").hex(" ")
+            self.ui.textEdit_SSend.clear()
+            self.ui.textEdit_SSend.insertPlainText(text)
         else:
-            if self.is_hex_mode(text):
-                text = text.replace(" ", "")
-                try:
-                    bytes_text = bytes.fromhex(text)
-                except ValueError:
-                    self.log.error("the datas can not be cast from hex mode")
-                    return False
-                self.ui.textEdit_SSend.clear()
-                self.ui.textEdit_SSend.insertPlainText(bytes_text.decode("gbk"))
+            if not self.is_send_hex_mode(text):
+                self.msgbox.warning(self, "Warning", "Can't cast to string from incorrect hex mode")
+                self.ui.checkBox_SHexmode.setChecked(True)
+                return False
+            try:
+                str_text = bytes.fromhex(text.replace(" ", "")).decode("gbk")
+            except ValueError:
+                self.log.error("Can't cast to string from this hex mode")
+                self.msgbox.critical(
+                    self, "Error", "Can't cast to string from this hex mode\nPlease check the data format")
+                self.ui.checkBox_SHexmode.setChecked(True)
+                return False
+            self.ui.textEdit_SSend.clear()
+            self.ui.textEdit_SSend.insertPlainText(str_text)
+
+    def is_send_hex_mode(self, text):
+        is_hex_flag = True
+        post_text = text.replace(" ", "")
+        if not len(post_text) % 2 == 0:
+            is_hex_flag = False
+        if is_hex_flag:
+            for item in post_text:
+                if not "0" <= item <= "9" and not "a" <= item <= "f" and not "A" <= item <= "F":
+                    is_hex_flag = False
+        return is_hex_flag
 
     def receive_set_hexmode(self):
         self.mutex.lock()
@@ -227,7 +244,7 @@ class MainWindow(QMainWindow):
             self.mutex.unlock()
             return False
         if hexmode_state:
-            if not self.is_hex_mode(text):
+            if not self.is_receive_hex_mode(text):
                 text = text.encode("gbk").hex(" ")
                 self.ui.textEdit_Receive.clear()
                 self.ui.textEdit_Receive.insertPlainText(text)
@@ -236,7 +253,7 @@ class MainWindow(QMainWindow):
             self.ui.textEdit_Receive.insertPlainText(" ")
             self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
         else:
-            if self.is_hex_mode(text):
+            if self.is_receive_hex_mode(text):
                 text = text.replace(" ", "")
                 bytes_text = bytes.fromhex(text)
                 self.ui.textEdit_Receive.clear()
@@ -244,13 +261,11 @@ class MainWindow(QMainWindow):
                 self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
         self.mutex.unlock()
 
-    def is_hex_mode(self, text):
+    def is_receive_hex_mode(self, text):
         is_hex_flag = True
         text_list = text.strip().split(" ")
         for item in text_list:
-            if len(item) > 2:
-                if len(item) == 4 and (item.startswith("0x") or item.startswith("0X")):
-                    continue
+            if len(item) != 2:
                 is_hex_flag = False
                 break
         if is_hex_flag:
@@ -325,6 +340,15 @@ class MainWindow(QMainWindow):
         if self.recthread.isRunning():
             self.recthread.run_flag = False
             self.recthread.quit()
+
+    def eventFilter(self, obj, event):
+        key_limits = [Qt.Key_0, Qt.Key_1, Qt.Key_2, Qt.Key_3, Qt.Key_4, Qt.Key_5, Qt.Key_6, Qt.Key_7, Qt.Key_8, Qt.Key_9, Qt.Key_A, Qt.Key_B, Qt.Key_C, Qt.Key_D, Qt.Key_E,
+                      Qt.Key_F, Qt.Key_Space, Qt.Key_Backspace, Qt.Key_Delete, Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down, Qt.Key_Control, Qt.Key_Shift, Qt.Key_Copy, Qt.Key_Paste]
+        if event.type() == QEvent.KeyPress and obj is self.ui.textEdit_SSend and self.ui.checkBox_SHexmode.isChecked():
+            if not event.key() in key_limits and not (event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_V):
+                self.msgbox.warning(self, "Warning", "Please input 0-9, a-f, A-F")
+                return True
+        return False  # super().eventFilter(obj, event)
 
 
 class WorkThread(QThread):
