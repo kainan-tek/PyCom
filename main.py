@@ -66,8 +66,8 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_SClear.clicked.connect(self.send_clear)
         self.ui.pushButton_RClear.clicked.connect(self.receive_clear)
         self.ui.pushButton_RSave.clicked.connect(self.receive_save)
-        self.ui.checkBox_SHexmode.clicked.connect(self.send_set_hexmode)
-        self.ui.checkBox_RHexmode.clicked.connect(self.receive_set_hexmode)
+        self.ui.checkBox_SHexmode.clicked.connect(self.send_set_format)
+        self.ui.checkBox_RHexmode.clicked.connect(self.receive_set_format)
         self.ui.checkBox_Cycle.clicked.connect(self.send_set_cyclemode)
 
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
@@ -146,14 +146,11 @@ class MainWindow(QMainWindow):
             int_list = [int(post_text[i:i+2], 16) for i in range(0, text_size, 2)]
             if newline_state:
                 int_list.extend([13, 10])
-                bytes_text = bytes(int_list)
-            else:
-                bytes_text = bytes(int_list)
+            bytes_text = bytes(int_list)
         else:
             if newline_state:
-                bytes_text = (text+'\r\n').encode("gbk")
-            else:
-                bytes_text = text.encode("gbk")
+                text = text+'\r\n'
+            bytes_text = text.encode("gbk", "replace")
 
         sendsize = self.ser_instance.write(bytes_text)
         self.total_sendsize = self.total_sendsize+sendsize
@@ -188,42 +185,27 @@ class MainWindow(QMainWindow):
                 self.msgbox.information(self, "Info", msg)
                 self.ui.checkBox_Cycle.setChecked(False)
                 return False
-            try:
-                int(cycle_text.strip())
-            except Exception:
-                self.msgbox.warning(self, "Warning", "Not correct cycle time format")
-                self.ui.checkBox_Cycle.setChecked(False)
-                return False
             self.send_timer.start(int(cycle_text.strip()))
             self.ui.lineEdit_Cycle.setEnabled(False)
         else:
             self.send_timer.stop()
             self.ui.lineEdit_Cycle.setEnabled(True)
 
-    def send_set_hexmode(self):
+    def send_set_format(self):
         hexmode_state = self.ui.checkBox_SHexmode.isChecked()
         text = self.ui.textEdit_SSend.toPlainText()
         if not text:
             return False
         if hexmode_state:
-            text = text.encode("gbk").hex(" ")
-            self.ui.textEdit_SSend.clear()
-            self.ui.textEdit_SSend.insertPlainText(text)
+            str_text = text.encode("gbk", "replace").hex(" ")
         else:
             if not self.is_send_hex_mode(text):
-                self.msgbox.warning(self, "Warning", "Can't cast to string from incorrect hex mode")
+                self.msgbox.warning(self, "Warning", "Not correct hex format")
                 self.ui.checkBox_SHexmode.setChecked(True)
                 return False
-            try:
-                str_text = bytes.fromhex(text.replace(" ", "")).decode("gbk")
-            except ValueError:
-                self.log.error("Can't cast to string from this hex mode")
-                self.msgbox.critical(
-                    self, "Error", "Can't cast to string from this hex mode\nPlease check the data format")
-                self.ui.checkBox_SHexmode.setChecked(True)
-                return False
-            self.ui.textEdit_SSend.clear()
-            self.ui.textEdit_SSend.insertPlainText(str_text)
+            str_text = bytes.fromhex(text.replace(" ", "")).decode("gbk", "replace")
+        self.ui.textEdit_SSend.clear()
+        self.ui.textEdit_SSend.insertPlainText(str_text)
 
     def is_send_hex_mode(self, text):
         is_hex_flag = True
@@ -236,7 +218,7 @@ class MainWindow(QMainWindow):
                     is_hex_flag = False
         return is_hex_flag
 
-    def receive_set_hexmode(self):
+    def receive_set_format(self):
         self.mutex.lock()
         hexmode_state = self.ui.checkBox_RHexmode.isChecked()
         text = self.ui.textEdit_Receive.toPlainText()
@@ -244,38 +226,13 @@ class MainWindow(QMainWindow):
             self.mutex.unlock()
             return False
         if hexmode_state:
-            if not self.is_receive_hex_mode(text):
-                text = text.encode("gbk").hex(" ")
-                self.ui.textEdit_Receive.clear()
-                self.ui.textEdit_Receive.insertPlainText(text)
-            else:
-                self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
-            self.ui.textEdit_Receive.insertPlainText(" ")
-            self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
+            str_text = text.encode("gbk", "replace").hex(" ")+" "
         else:
-            if self.is_receive_hex_mode(text):
-                text = text.replace(" ", "")
-                bytes_text = bytes.fromhex(text)
-                self.ui.textEdit_Receive.clear()
-                self.ui.textEdit_Receive.insertPlainText(bytes_text.decode("gbk"))
-                self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
+            str_text = bytes.fromhex(text).decode("gbk", "replace")
+        self.ui.textEdit_Receive.clear()
+        self.ui.textEdit_Receive.insertPlainText(str_text)
+        self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
         self.mutex.unlock()
-
-    def is_receive_hex_mode(self, text):
-        is_hex_flag = True
-        text_list = text.strip().split(" ")
-        for item in text_list:
-            if len(item) != 2:
-                is_hex_flag = False
-                break
-        if is_hex_flag:
-            for item in text_list:
-                try:
-                    int(item, 16)
-                except ValueError:
-                    is_hex_flag = False
-                    break
-        return is_hex_flag
 
     def update_receive_ui(self):
         self.mutex.lock()
@@ -286,7 +243,7 @@ class MainWindow(QMainWindow):
             if hex_status:
                 recdatas = recdatas.hex(" ")
             else:
-                recdatas = recdatas.decode("gbk", "ignore")
+                recdatas = recdatas.decode("gbk", "replace")
             self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
             self.ui.textEdit_Receive.insertPlainText(recdatas)
             if hex_status:
