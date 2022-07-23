@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialo
 from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
 from ui.ui_mainwindow import Ui_MainWindow
+from about import About
 
 
 class MainWindow(QMainWindow):
@@ -19,6 +20,7 @@ class MainWindow(QMainWindow):
         self.log = log
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.about = About()
         self.var_init()
         self.gui_init()
         self.parse_ports()
@@ -291,7 +293,8 @@ class MainWindow(QMainWindow):
         sys.exit()
 
     def action_about(self):
-        self.msgbox.information(self, "About", gl.AboutInfo)
+        # self.msgbox.information(self, "About", gl.AboutInfo)
+        self.about.show()
 
     def closeEvent(self, event):
         if self.recthread.isRunning():
