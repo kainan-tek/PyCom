@@ -1,4 +1,6 @@
 import os
+import re
+import string
 import sys
 import time
 import queue
@@ -41,6 +43,11 @@ class MainWindow(QMainWindow):
         self.recthread.rec_signal.connect(self.update_receive_ui)
         self.recthread.close_signal.connect(self.post_close_port)
         self.recthread.start()
+
+        self.key_limits = [Qt.Key_0, Qt.Key_1, Qt.Key_2, Qt.Key_3, Qt.Key_4, Qt.Key_5, Qt.Key_6, Qt.Key_7, Qt.Key_8,
+                           Qt.Key_9, Qt.Key_A, Qt.Key_B, Qt.Key_C, Qt.Key_D, Qt.Key_E, Qt.Key_F, Qt.Key_Space,
+                           Qt.Key_Backspace, Qt.Key_Delete, Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down,
+                           Qt.Key_Control, Qt.Key_Shift, Qt.Key_Copy, Qt.Key_Paste]
 
     def gui_init(self):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
@@ -143,9 +150,11 @@ class MainWindow(QMainWindow):
                     self.ui.checkBox_Cycle.click()
                 self.msgbox.warning(self, "Warning", "Not correct hex format")
                 return False
-            post_text = text.replace(" ", "")
-            text_size = len(post_text)
-            int_list = [int(post_text[i:i+2], 16) for i in range(0, text_size, 2)]
+            text_list = re.findall(".{2}", text.replace(" ", ""))
+            str_text = " ".join(text_list)
+            self.ui.textEdit_SSend.clear()
+            self.ui.textEdit_SSend.insertPlainText(str_text)
+            int_list = [int(item, 16) for item in text_list]
             if newline_state:
                 int_list.extend([13, 10])
             bytes_text = bytes(int_list)
@@ -210,15 +219,12 @@ class MainWindow(QMainWindow):
         self.ui.textEdit_SSend.insertPlainText(str_text)
 
     def is_send_hex_mode(self, text):
-        is_hex_flag = True
         post_text = text.replace(" ", "")
         if not len(post_text) % 2 == 0:
-            is_hex_flag = False
-        if is_hex_flag:
-            for item in post_text:
-                if not "0" <= item <= "9" and not "a" <= item <= "f" and not "A" <= item <= "F":
-                    is_hex_flag = False
-        return is_hex_flag
+            return False
+        if not all(item in string.hexdigits for item in post_text):
+            return False
+        return True
 
     def receive_set_format(self):
         self.mutex.lock()
@@ -302,11 +308,9 @@ class MainWindow(QMainWindow):
             self.recthread.quit()
 
     def eventFilter(self, obj, event):
-        key_limits = [Qt.Key_0, Qt.Key_1, Qt.Key_2, Qt.Key_3, Qt.Key_4, Qt.Key_5, Qt.Key_6, Qt.Key_7, Qt.Key_8, Qt.Key_9, Qt.Key_A, Qt.Key_B, Qt.Key_C, Qt.Key_D, Qt.Key_E,
-                      Qt.Key_F, Qt.Key_Space, Qt.Key_Backspace, Qt.Key_Delete, Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down, Qt.Key_Control, Qt.Key_Shift, Qt.Key_Copy, Qt.Key_Paste]
         if event.type() == QEvent.KeyPress and obj is self.ui.textEdit_SSend and self.ui.checkBox_SHexmode.isChecked():
-            if not event.key() in key_limits and not (event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_V):
-                self.msgbox.warning(self, "Warning", "Please input 0-9, a-f, A-F")
+            if not event.key() in self.key_limits and not (event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_V):
+                self.msgbox.warning(self, "Warning", "Hex mode now!\nPlease input 0-9, a-f, A-F")
                 return True
         return False  # super().eventFilter(obj, event)
 
