@@ -9,7 +9,7 @@ import serial.tools.list_ports
 import logwrapper as log
 import globalvar as gl
 import resrc.resource as res
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
 from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
 from ui.ui_mainwindow import Ui_MainWindow
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
     def var_init(self):
         self.total_sendsize = 0
         self.total_recsize = 0
-        self.statusbar_text = ""
+        self.datasize_text = ""
         self.recdatas_file = ""
         self.mutex = QMutex()
         self.msgbox = QMessageBox()
@@ -83,8 +83,10 @@ class MainWindow(QMainWindow):
         self.ui.actionExit.triggered.connect(self.action_exit)
         self.ui.actionAbout.triggered.connect(self.action_about)
 
-        self.statusbar_text = "  Send: 0  |  Receive: 0"
-        self.ui.statusbar.showMessage(self.statusbar_text)
+        self.datasize_text = "  Send: 0  |  Receive: 0  "
+        self.label_datasize = QLabel(self.datasize_text)
+        self.label_datasize.setStyleSheet("color:blue")
+        self.ui.statusbar.addPermanentWidget(self.label_datasize, stretch=0)
         self.ui.pushButton_Open.setEnabled(True)
         self.ui.pushButton_Close.setEnabled(False)
 
@@ -165,20 +167,20 @@ class MainWindow(QMainWindow):
 
         sendsize = self.ser_instance.write(bytes_text)
         self.total_sendsize = self.total_sendsize+sendsize
-        self.statusbar_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}"
-        self.ui.statusbar.showMessage(self.statusbar_text)
+        self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}  "
+        self.label_datasize.setText(self.datasize_text)
 
     def send_clear(self):
         self.ui.textEdit_SSend.clear()
         self.total_sendsize = 0
-        self.statusbar_text = f"  Send: 0  |  Receive: {self.total_recsize}"
-        self.ui.statusbar.showMessage(self.statusbar_text)
+        self.datasize_text = f"  Send: 0  |  Receive: {self.total_recsize}  "
+        self.label_datasize.setText(self.datasize_text)
 
     def receive_clear(self):
         self.ui.textEdit_Receive.clear()
         self.total_recsize = 0
-        self.statusbar_text = f"  Send: {self.total_sendsize}  |  Receive: 0"
-        self.ui.statusbar.showMessage(self.statusbar_text)
+        self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: 0  "
+        self.label_datasize.setText(self.datasize_text)
 
     def send_set_cyclemode(self):
         if self.ui.checkBox_Cycle.isChecked():
@@ -258,8 +260,8 @@ class MainWindow(QMainWindow):
                 self.ui.textEdit_Receive.insertPlainText(" ")
             self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
             self.total_recsize = self.total_recsize+recsize
-            self.statusbar_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}"
-            self.ui.statusbar.showMessage(self.statusbar_text)
+            self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}  "
+            self.label_datasize.setText(self.datasize_text)
         self.mutex.unlock()
 
     def receive_save(self):
