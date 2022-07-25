@@ -154,8 +154,9 @@ class MainWindow(QMainWindow):
                 return False
             text_list = re.findall(".{2}", text.replace(" ", ""))
             str_text = " ".join(text_list)
-            self.ui.textEdit_SSend.clear()
-            self.ui.textEdit_SSend.insertPlainText(str_text)
+            if not str_text == text:
+                self.ui.textEdit_SSend.clear()
+                self.ui.textEdit_SSend.insertPlainText(str_text)
             int_list = [int(item, 16) for item in text_list]
             if newline_state:
                 int_list.extend([13, 10])
