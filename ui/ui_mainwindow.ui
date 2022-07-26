@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>491</height>
+    <width>700</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>688</width>
-    <height>491</height>
+    <width>700</width>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>688</width>
-    <height>491</height>
+    <width>700</width>
+    <height>500</height>
    </size>
   </property>
   <property name="font">
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>0</y>
+      <y>5</y>
       <width>186</width>
       <height>306</height>
      </rect>
@@ -277,10 +277,10 @@
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>4</x>
-      <y>310</y>
-      <width>681</width>
-      <height>136</height>
+      <x>5</x>
+      <y>315</y>
+      <width>691</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -292,10 +292,10 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="geometry">
       <rect>
-       <x>1</x>
+       <x>0</x>
        <y>20</y>
-       <width>566</width>
-       <height>116</height>
+       <width>576</width>
+       <height>121</height>
       </rect>
      </property>
      <property name="currentIndex">
@@ -308,11 +308,17 @@
       <widget class="QTextEdit" name="textEdit_SSend">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>560</width>
-         <height>86</height>
+         <x>1</x>
+         <y>1</y>
+         <width>568</width>
+         <height>91</height>
         </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </widget>
@@ -330,7 +336,7 @@
     <widget class="QPushButton" name="pushButton_Send">
      <property name="geometry">
       <rect>
-       <x>585</x>
+       <x>590</x>
        <y>50</y>
        <width>81</width>
        <height>31</height>
@@ -343,7 +349,7 @@
     <widget class="QPushButton" name="pushButton_SClear">
      <property name="geometry">
       <rect>
-       <x>585</x>
+       <x>590</x>
        <y>95</y>
        <width>81</width>
        <height>31</height>
@@ -356,7 +362,7 @@
     <widget class="QCheckBox" name="checkBox_Newline">
      <property name="geometry">
       <rect>
-       <x>493</x>
+       <x>500</x>
        <y>19</y>
        <width>79</width>
        <height>21</height>
@@ -369,7 +375,7 @@
     <widget class="QCheckBox" name="checkBox_SHexmode">
      <property name="geometry">
       <rect>
-       <x>585</x>
+       <x>590</x>
        <y>20</y>
        <width>79</width>
        <height>21</height>
@@ -382,7 +388,7 @@
     <widget class="QLineEdit" name="lineEdit_Cycle">
      <property name="geometry">
       <rect>
-       <x>400</x>
+       <x>405</x>
        <y>20</y>
        <width>71</width>
        <height>21</height>
@@ -395,7 +401,7 @@
     <widget class="QCheckBox" name="checkBox_Cycle">
      <property name="geometry">
       <rect>
-       <x>320</x>
+       <x>325</x>
        <y>20</y>
        <width>81</width>
        <height>21</height>
@@ -410,8 +416,8 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>0</y>
-      <width>483</width>
+      <y>5</y>
+      <width>496</width>
       <height>306</height>
      </rect>
     </property>
@@ -429,7 +435,7 @@
       <rect>
        <x>5</x>
        <y>20</y>
-       <width>476</width>
+       <width>486</width>
        <height>251</height>
       </rect>
      </property>
@@ -446,7 +452,7 @@
     <widget class="QCheckBox" name="checkBox_RHexmode">
      <property name="geometry">
       <rect>
-       <x>388</x>
+       <x>395</x>
        <y>275</y>
        <width>79</width>
        <height>26</height>
@@ -459,7 +465,7 @@
     <widget class="QPushButton" name="pushButton_RClear">
      <property name="geometry">
       <rect>
-       <x>295</x>
+       <x>305</x>
        <y>275</y>
        <width>71</width>
        <height>26</height>
@@ -472,7 +478,7 @@
     <widget class="QPushButton" name="pushButton_RSave">
      <property name="geometry">
       <rect>
-       <x>205</x>
+       <x>210</x>
        <y>275</y>
        <width>71</width>
        <height>26</height>
@@ -489,7 +495,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>688</width>
+     <width>700</width>
      <height>23</height>
     </rect>
    </property>
@@ -515,6 +521,7 @@
     <property name="font">
      <font>
       <pointsize>10</pointsize>
+      <bold>false</bold>
      </font>
     </property>
     <property name="title">
