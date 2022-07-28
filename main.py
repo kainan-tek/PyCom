@@ -53,10 +53,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
         self.setWindowIcon(QIcon(QPixmap(":/icon/pycom")))
 
-        self.ui.textEdit_SSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
+        self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
         self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
-        self.ui.textEdit_SSend.installEventFilter(self)
-        self.ui.lineEdit_Cycle.setValidator(QIntValidator())
+        self.ui.textEdit_sSend.installEventFilter(self)
+        self.ui.lineEdit_sCycle.setValidator(QIntValidator())
 
         self.ui.comboBox_BRate.addItems(gl.SerialInfo["baudrate"])
         self.ui.comboBox_BRate.setCurrentText('115200')
@@ -71,13 +71,13 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_Open.clicked.connect(self.open_port)
         self.ui.pushButton_Close.clicked.connect(self.close_port)
 
-        self.ui.pushButton_Send.clicked.connect(self.single_data_send)
-        self.ui.pushButton_SClear.clicked.connect(self.send_clear)
+        self.ui.pushButton_sSend.clicked.connect(self.single_data_send)
+        self.ui.pushButton_sClear.clicked.connect(self.send_clear)
         self.ui.pushButton_RClear.clicked.connect(self.receive_clear)
         self.ui.pushButton_RSave.clicked.connect(self.receive_save)
-        self.ui.checkBox_SHexmode.clicked.connect(self.send_set_format)
+        self.ui.checkBox_sHexmode.clicked.connect(self.send_set_format)
         self.ui.checkBox_RHexmode.clicked.connect(self.receive_set_format)
-        self.ui.checkBox_Cycle.clicked.connect(self.send_set_cyclemode)
+        self.ui.checkBox_sCycle.clicked.connect(self.send_set_cyclemode)
 
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
         self.ui.actionExit.triggered.connect(self.action_exit)
@@ -128,8 +128,8 @@ class MainWindow(QMainWindow):
 
     def close_port(self):
         if self.ser_instance.isOpen():
-            if self.ui.checkBox_Cycle.isChecked():
-                self.ui.checkBox_Cycle.click()
+            if self.ui.checkBox_sCycle.isChecked():
+                self.ui.checkBox_sCycle.click()
             self.recthread.close_flag = True  # triger the serial close function in receive thread
             # self.ser_instance.close()  # the serial readall function in receive thread may crash
 
@@ -139,24 +139,24 @@ class MainWindow(QMainWindow):
             self.ui.pushButton_Close.setEnabled(False)
 
     def single_data_send(self):
-        newline_state = self.ui.checkBox_Newline.isChecked()
-        text = self.ui.textEdit_SSend.toPlainText()
+        newline_state = self.ui.checkBox_sNewline.isChecked()
+        text = self.ui.textEdit_sSend.toPlainText()
         if not text:
             return False
         if not self.ser_instance.isOpen():
             self.msgbox.information(self, "Info", "Please open a serial port first")
             return False
-        if self.ui.checkBox_SHexmode.isChecked():
+        if self.ui.checkBox_sHexmode.isChecked():
             if not self.is_send_hex_mode(text):
-                if self.ui.checkBox_Cycle.isChecked():
-                    self.ui.checkBox_Cycle.click()
+                if self.ui.checkBox_sCycle.isChecked():
+                    self.ui.checkBox_sCycle.click()
                 self.msgbox.warning(self, "Warning", "Not correct hex format")
                 return False
             text_list = re.findall(".{2}", text.replace(" ", ""))
             str_text = " ".join(text_list)
             if not str_text == text:
-                self.ui.textEdit_SSend.clear()
-                self.ui.textEdit_SSend.insertPlainText(str_text)
+                self.ui.textEdit_sSend.clear()
+                self.ui.textEdit_sSend.insertPlainText(str_text)
             int_list = [int(item, 16) for item in text_list]
             if newline_state:
                 int_list.extend([13, 10])
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow):
         self.label_datasize.setText(self.datasize_text)
 
     def send_clear(self):
-        self.ui.textEdit_SSend.clear()
+        self.ui.textEdit_sSend.clear()
         self.total_sendsize = 0
         self.datasize_text = f"  Send: 0  |  Receive: {self.total_recsize}  "
         self.label_datasize.setText(self.datasize_text)
@@ -184,9 +184,9 @@ class MainWindow(QMainWindow):
         self.label_datasize.setText(self.datasize_text)
 
     def send_set_cyclemode(self):
-        if self.ui.checkBox_Cycle.isChecked():
-            cycle_text = self.ui.lineEdit_Cycle.text()
-            send_text = self.ui.textEdit_SSend.toPlainText()
+        if self.ui.checkBox_sCycle.isChecked():
+            cycle_text = self.ui.lineEdit_sCycle.text()
+            send_text = self.ui.textEdit_sSend.toPlainText()
             msg = ""
             if not self.ser_instance.isOpen():
                 msg = "Please open a port first"
@@ -197,17 +197,17 @@ class MainWindow(QMainWindow):
             if msg:
                 self.log.info(f"Info: {msg}")
                 self.msgbox.information(self, "Info", msg)
-                self.ui.checkBox_Cycle.setChecked(False)
+                self.ui.checkBox_sCycle.setChecked(False)
                 return False
             self.send_timer.start(int(cycle_text.strip()))
-            self.ui.lineEdit_Cycle.setEnabled(False)
+            self.ui.lineEdit_sCycle.setEnabled(False)
         else:
             self.send_timer.stop()
-            self.ui.lineEdit_Cycle.setEnabled(True)
+            self.ui.lineEdit_sCycle.setEnabled(True)
 
     def send_set_format(self):
-        hexmode_state = self.ui.checkBox_SHexmode.isChecked()
-        text = self.ui.textEdit_SSend.toPlainText()
+        hexmode_state = self.ui.checkBox_sHexmode.isChecked()
+        text = self.ui.textEdit_sSend.toPlainText()
         if not text:
             return False
         if hexmode_state:
@@ -215,11 +215,11 @@ class MainWindow(QMainWindow):
         else:
             if not self.is_send_hex_mode(text):
                 self.msgbox.warning(self, "Warning", "Not correct hex format")
-                self.ui.checkBox_SHexmode.setChecked(True)
+                self.ui.checkBox_sHexmode.setChecked(True)
                 return False
             str_text = bytes.fromhex(text.replace(" ", "")).decode("gbk", "replace")
-        self.ui.textEdit_SSend.clear()
-        self.ui.textEdit_SSend.insertPlainText(str_text)
+        self.ui.textEdit_sSend.clear()
+        self.ui.textEdit_sSend.insertPlainText(str_text)
 
     def is_send_hex_mode(self, text):
         post_text = text.replace(" ", "")
@@ -311,7 +311,7 @@ class MainWindow(QMainWindow):
             self.recthread.quit()
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.KeyPress and obj is self.ui.textEdit_SSend and self.ui.checkBox_SHexmode.isChecked():
+        if event.type() == QEvent.KeyPress and obj is self.ui.textEdit_sSend and self.ui.checkBox_sHexmode.isChecked():
             if not event.key() in self.key_limits and not (event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_V):
                 self.msgbox.warning(self, "Warning", "Hex mode now!\nPlease input 0-9, a-f, A-F")
                 return True
