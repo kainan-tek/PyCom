@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>500</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>700</width>
-    <height>500</height>
+    <height>510</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>700</width>
-    <height>500</height>
+    <height>510</height>
    </size>
   </property>
   <property name="font">
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>5</y>
+      <y>3</y>
       <width>186</width>
       <height>306</height>
      </rect>
@@ -280,7 +280,7 @@
       <x>5</x>
       <y>315</y>
       <width>691</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -292,11 +292,14 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>20</y>
-       <width>576</width>
-       <height>121</height>
+       <x>1</x>
+       <y>18</y>
+       <width>688</width>
+       <height>131</height>
       </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -308,10 +311,10 @@
       <widget class="QTextEdit" name="textEdit_SSend">
        <property name="geometry">
         <rect>
-         <x>1</x>
-         <y>1</y>
-         <width>568</width>
-         <height>91</height>
+         <x>0</x>
+         <y>0</y>
+         <width>495</width>
+         <height>106</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -319,6 +322,87 @@
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox_Cycle">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>80</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Cycle(ms)</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_Cycle">
+       <property name="geometry">
+        <rect>
+         <x>600</x>
+         <y>80</y>
+         <width>71</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>1000</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox_Newline">
+       <property name="geometry">
+        <rect>
+         <x>600</x>
+         <y>5</y>
+         <width>79</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>NewLine</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox_SHexmode">
+       <property name="geometry">
+        <rect>
+         <x>600</x>
+         <y>45</y>
+         <width>79</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HexMode</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_Send">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>5</y>
+         <width>71</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Send</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_SClear">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>45</y>
+         <width>71</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Clear</string>
        </property>
       </widget>
      </widget>
@@ -333,90 +417,12 @@
       </attribute>
      </widget>
     </widget>
-    <widget class="QPushButton" name="pushButton_Send">
-     <property name="geometry">
-      <rect>
-       <x>590</x>
-       <y>50</y>
-       <width>81</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Send</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_SClear">
-     <property name="geometry">
-      <rect>
-       <x>590</x>
-       <y>95</y>
-       <width>81</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Clear</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_Newline">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>19</y>
-       <width>79</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>NewLine</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_SHexmode">
-     <property name="geometry">
-      <rect>
-       <x>590</x>
-       <y>20</y>
-       <width>79</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>HexMode</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_Cycle">
-     <property name="geometry">
-      <rect>
-       <x>405</x>
-       <y>20</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>1000</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_Cycle">
-     <property name="geometry">
-      <rect>
-       <x>325</x>
-       <y>20</y>
-       <width>81</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Cycle(ms)</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>5</y>
+      <y>3</y>
       <width>496</width>
       <height>306</height>
      </rect>
@@ -452,7 +458,7 @@
     <widget class="QCheckBox" name="checkBox_RHexmode">
      <property name="geometry">
       <rect>
-       <x>395</x>
+       <x>215</x>
        <y>275</y>
        <width>79</width>
        <height>26</height>
@@ -465,7 +471,7 @@
     <widget class="QPushButton" name="pushButton_RClear">
      <property name="geometry">
       <rect>
-       <x>305</x>
+       <x>315</x>
        <y>275</y>
        <width>71</width>
        <height>26</height>
@@ -478,7 +484,7 @@
     <widget class="QPushButton" name="pushButton_RSave">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>405</x>
        <y>275</y>
        <width>71</width>
        <height>26</height>
