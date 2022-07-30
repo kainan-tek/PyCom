@@ -5,7 +5,7 @@
 python v3.10.5  
 pyside6==6.3.1  
 pyserial==3.5  
-chardet==5.0.0
+chardet==5.0.0  
 pyinstaller==5.2 (optional)  
 notice: pyinstaller is used for packing the python script file(\*.py) to executable file(\*.exe).  
 
