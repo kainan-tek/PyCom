@@ -1,5 +1,5 @@
 GuiInfo = {"proj": "PyCOM",
-           "version": " v1.0.0",
+           "version": " v1.1.0",
            "email": "kainanos@outlook.com",
            "win_tmp": "C:/temp",
            "dbg_reldir": r"log/pycom/debug",

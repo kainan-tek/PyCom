@@ -661,6 +661,9 @@
          <height>21</height>
         </rect>
        </property>
+       <property name="text">
+        <string>1000</string>
+       </property>
       </widget>
       <widget class="QCheckBox" name="checkBox_mCycle">
        <property name="geometry">
@@ -849,7 +852,22 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuSetting">
+    <property name="title">
+     <string>Setting</string>
+    </property>
+    <widget class="QMenu" name="menuEncoding_Type">
+     <property name="title">
+      <string>Encoding Set</string>
+     </property>
+     <addaction name="actionUTF_8"/>
+     <addaction name="separator"/>
+     <addaction name="actionGBK"/>
+    </widget>
+    <addaction name="menuEncoding_Type"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSetting"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -866,6 +884,25 @@
   <action name="actionOpen_File">
    <property name="text">
     <string>Open File</string>
+   </property>
+  </action>
+  <action name="actionUTF_8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>UTF-8</string>
+   </property>
+  </action>
+  <action name="actionGBK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GBK</string>
    </property>
   </action>
  </widget>
