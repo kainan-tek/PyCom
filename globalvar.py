@@ -14,6 +14,24 @@ SerialInfo = {"baudrate": ['300', '600', '1200', '2400', '4800', '9600', '14400'
               "timeout": 0.01
               }
 
+GuideInfo = f"""
+    Encoding: the default encoding is gbk, plese change in the setting menu if needed.
+
+    Single Send: 
+      Send the single datas directly with Send button, or send the datas with a cycle time.
+
+    Multi Send:
+      Send each data item directly with its Send button, or send all selected items with a cycle time.
+
+    File Send:
+      Support txt file and json file. 
+      For txt file, just send the file contents directly with Send button.
+      For json file, it is similar to multi send function, user can customize the datas and cycle time.
+      check the demo_data.json file. 
+      for cycle_ms tag, 0: send all selected items directly. 1000: send all selected items with the cycle time.
+      for select tag, 0: the data is selected to be sent; 1: the data is not selected to be sent.
+"""
+
 AboutInfo = f"""
     Project: {GuiInfo["proj"]}
     Version: {GuiInfo["version"]}

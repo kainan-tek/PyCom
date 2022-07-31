@@ -10,6 +10,7 @@ import serial.tools.list_ports
 import logwrapper as log
 import globalvar as gl
 import resrc.resource as res
+from parse_file import JsonFlag, JsonParse
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
 from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
@@ -35,12 +36,15 @@ class MainWindow(QMainWindow):
         self.recdatas_file = ""
         self.encode_info = "gbk"
         self.multi_dict = {}
+        self.js_send_list = []
         self.mutex = QMutex()
         self.msgbox = QMessageBox()
         self.dialog = QFileDialog()
         self.ser_instance = serial.Serial()
         self.send_timer = QTimer()
         self.send_timer.timeout.connect(self.data_send)
+        self.fsend_timer = QTimer()
+        self.fsend_timer.timeout.connect(self.jsfile_data_send)
 
         self.recthread = WorkThread(self.ser_instance)
         self.recthread.rec_signal.connect(self.update_receive_ui)
@@ -55,8 +59,6 @@ class MainWindow(QMainWindow):
     def gui_init(self):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
         self.setWindowIcon(QIcon(QPixmap(":/icon/pycom")))
-        self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
-        self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
 
         # menu set up
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
@@ -81,6 +83,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_Close.setEnabled(False)
 
         # single send set up
+        self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
         self.ui.pushButton_sSend.clicked.connect(self.single_data_send)
         self.ui.pushButton_sClear.clicked.connect(self.send_clear)
         self.ui.pushButton_RClear.clicked.connect(self.receive_clear)
@@ -91,7 +94,7 @@ class MainWindow(QMainWindow):
         self.ui.textEdit_sSend.installEventFilter(self)
         self.ui.lineEdit_sCycle.setValidator(QIntValidator())
 
-        # multi-send set up
+        # multi send set up
         self.ui.pushButton_m1.clicked.connect(self.multi_send_m1)
         self.ui.pushButton_m2.clicked.connect(self.multi_send_m2)
         self.ui.pushButton_m3.clicked.connect(self.multi_send_m3)
@@ -105,11 +108,18 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_fSelect.clicked.connect(self.file_send_select)
         self.ui.pushButton_fSend.clicked.connect(self.file_send)
 
+        # guide set up
+        self.ui.plainTextEdit_Guide.setStyleSheet(u"background-color: rgb(231, 234, 237);")
+        self.ui.plainTextEdit_Guide.setPlainText(gl.GuideInfo)
+
+        # receive set up
+        self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
+
         # statusbar set up
         self.datasize_text = "  Send: 0  |  Receive: 0  "
-        self.label_datasize = QLabel(self.datasize_text)
-        self.label_datasize.setStyleSheet("color:blue")
-        self.ui.statusbar.addPermanentWidget(self.label_datasize, stretch=0)
+        self.label_rwsize = QLabel(self.datasize_text)
+        self.label_rwsize.setStyleSheet("color:blue")
+        self.ui.statusbar.addPermanentWidget(self.label_rwsize, stretch=0)
 
 ########################## port function ############################
 
@@ -154,6 +164,7 @@ class MainWindow(QMainWindow):
             self.ui.checkBox_sCycle.click()
         if self.ui.checkBox_mCycle.isChecked():
             self.ui.checkBox_mCycle.click()
+        self.fsend_timer.stop()
         if self.ser_instance.isOpen():
             self.recthread.close_flag = True  # triger the serial close function in receive thread
             # self.ser_instance.close()  # the serial readall function in receive thread may crash
@@ -190,8 +201,7 @@ class MainWindow(QMainWindow):
     def send_clear(self):
         self.ui.textEdit_sSend.clear()
         self.total_sendsize = 0
-        self.datasize_text = f"  Send: 0  |  Receive: {self.total_recsize}  "
-        self.label_datasize.setText(self.datasize_text)
+        self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def single_data_send(self):
         int_list = []
@@ -227,8 +237,7 @@ class MainWindow(QMainWindow):
 
         sendsize = self.ser_instance.write(bytes_text)
         self.total_sendsize = self.total_sendsize+sendsize
-        self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}  "
-        self.label_datasize.setText(self.datasize_text)
+        self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def send_set_cyclemode(self):
         if self.ui.checkBox_sCycle.isChecked():
@@ -329,8 +338,7 @@ class MainWindow(QMainWindow):
 
         sendsize = self.ser_instance.write(bytes_text)
         self.total_sendsize = self.total_sendsize+sendsize
-        self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}  "
-        self.label_datasize.setText(self.datasize_text)
+        self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def multi_cycle_send(self):
         if self.ui.checkBox_m1.isChecked():
@@ -399,6 +407,85 @@ class MainWindow(QMainWindow):
             self.send_timer.stop()
             self.ui.lineEdit_mCycle.setEnabled(True)
 
+########################## file send function ############################
+
+    def file_send_select(self):
+        self.dialog.setFileMode(QFileDialog.AnyFile)
+        self.dialog.setViewMode(QFileDialog.Detail)
+        if not self.dialog.exec():
+            return False
+        file_name = self.dialog.selectedFiles()[0]
+        if not file_name:
+            return False
+        self.log.info(f"send file: {file_name}")
+        self.ui.lineEdit_fFile.setText(file_name)
+
+    def predict_encoding(self, file):
+        with open(file, 'rb') as f:
+            encodeinfo = chardet.detect(f.read())
+        # print(encodeinfo['encoding'])
+        return encodeinfo['encoding']
+
+    def file_send(self):
+        if not self.ser_instance.isOpen():
+            self.msgbox.information(self, "Info", "Please open serial port first")
+            return False
+
+        sfile = self.ui.lineEdit_fFile.text()
+        if not sfile or not os.path.exists(sfile):
+            self.msgbox.information(self, "Info", "the file is not existed")
+            return False
+
+        basename = os.path.basename(sfile)
+        self.js_send_list.clear()
+        if "json" in basename:
+            # for json file
+            jsparser = JsonParse(sfile)
+            ret = jsparser.file_read()
+            if not ret[0].value == JsonFlag.SUCCESS.value:
+                msgtext = f'Error of reading json fie, err: {ret[0].name}'
+                self.log.error(msgtext)
+                self.msgbox.critical(self, "Error", msgtext)
+                return False
+            js_dict = ret[1]
+            cycle_time = js_dict["cycle_ms"]
+            self.js_send_list = [[js_dict["datas"][i]["select"], 0, js_dict["datas"][i]["data"]]
+                                 for i in range(len(js_dict["datas"]))]
+            if cycle_time > 0:
+                self.fsend_timer.start(cycle_time)
+            else:
+                for item in self.js_send_list:
+                    if item[0] == 1:
+                        sendsize = self.ser_instance.write(item[2].encode(self.encode_info, "ignore"))
+                        self.total_sendsize = self.total_sendsize+sendsize
+                        self.update_rwsize_status(self.total_sendsize, self.total_recsize)
+        else:
+            # for txt file
+            encode = self.predict_encoding(sfile)
+            try:
+                with open(sfile, mode='r', encoding=encode) as fp:
+                    send_text = fp.read()
+            except Exception as e:
+                msgtext = "Error of opening file"
+                self.log.error(f'{msgtext}: {e}')
+                self.msgbox.critical(self, "Error", msgtext)
+                return False
+            if self.ser_instance.isOpen():
+                sendsize = self.ser_instance.write(send_text.encode(self.encode_info, "ignore"))
+                self.total_sendsize = self.total_sendsize+sendsize
+                self.update_rwsize_status(self.total_sendsize, self.total_recsize)
+
+    def jsfile_data_send(self):
+        for item in self.js_send_list:
+            if item[0] == 1 and item[1] == 0:
+                sendsize = self.ser_instance.write(item[2].encode(self.encode_info, "ignore"))
+                item[1] = 1
+                self.total_sendsize = self.total_sendsize+sendsize
+                self.update_rwsize_status(self.total_sendsize, self.total_recsize)
+                break
+        if all(item[1] == 1 for item in self.js_send_list if item[0] == 1):
+            self.fsend_timer.stop()
+
 ########################## receive function ############################
 
     def receive_set_hexmode(self):
@@ -433,8 +520,7 @@ class MainWindow(QMainWindow):
                 self.ui.textEdit_Receive.insertPlainText(" ")
             self.ui.textEdit_Receive.moveCursor(QTextCursor.End)
             self.total_recsize = self.total_recsize+recsize
-            self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: {self.total_recsize}  "
-            self.label_datasize.setText(self.datasize_text)
+            self.update_rwsize_status(self.total_sendsize, self.total_recsize)
         self.mutex.unlock()
 
     def receive_save(self):
@@ -460,45 +546,11 @@ class MainWindow(QMainWindow):
     def receive_clear(self):
         self.ui.textEdit_Receive.clear()
         self.total_recsize = 0
-        self.datasize_text = f"  Send: {self.total_sendsize}  |  Receive: 0  "
-        self.label_datasize.setText(self.datasize_text)
+        self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
-########################## file send function ############################
-
-    def file_send_select(self):
-        self.dialog.setFileMode(QFileDialog.AnyFile)
-        self.dialog.setViewMode(QFileDialog.Detail)
-        if not self.dialog.exec():
-            return False
-        file_name = self.dialog.selectedFiles()[0]
-        if not file_name:
-            return False
-        self.log.info(f"send file: {file_name}")
-        self.ui.lineEdit_fFile.setText(file_name)
-
-    def predict_encoding(self, file):
-        with open(file, 'rb') as f:
-            encodeinfo = chardet.detect(f.read())
-        # print(encodeinfo['encoding'])
-        return encodeinfo['encoding']
-
-    def file_send(self):
-        sfile = self.ui.lineEdit_fFile.text()
-        if not sfile or not os.path.exists(sfile):
-            self.msgbox.information(self, "Info", "the file is not existed")
-            return False
-
-        encode = self.predict_encoding(sfile)
-        try:
-            with open(sfile, mode='r', encoding=encode) as fp:
-                send_text = fp.read()
-        except Exception as e:
-            msgtext = "Error of opening file"
-            self.log.error(f'{msgtext}: {e}')
-            self.msgbox.critical(self, "Error", msgtext)
-            return False
-        if self.ser_instance.isOpen():
-            self.ser_instance.write(send_text.encode(self.encode_info, "ignore"))
+    def update_rwsize_status(self, send_sz, rec_sz):
+        self.datasize_text = f"  Send: {send_sz}  |  Receive: {rec_sz}  "
+        self.label_rwsize.setText(self.datasize_text)
 
 ########################## menu function ############################
 
