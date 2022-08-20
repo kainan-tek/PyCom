@@ -7,7 +7,7 @@
         },
         {
             "select": 1,
-            "data": "test 2\r\n"
+            "data": "中文 2\r\n"
         },
         {
             "select": 0,

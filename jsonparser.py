@@ -12,18 +12,18 @@ class JsonFlag(Enum):
     EMPTY_DICT = 4
 
 
-class JsonParse():
+class JsonParser():
     def __init__(self, _file):
         self.file = _file
 
-    def file_read(self):
+    def file_read(self, encode="utf-8"):
         json_dict = {}
 
         if not os.path.exists(self.file):
             return (JsonFlag.NO_FILE, json_dict)
 
         try:
-            with open(self.file, mode='r', encoding="utf-8") as fp:
+            with open(self.file, mode='r', encoding=encode, newline='') as fp:
                 json_dict = json.load(fp)
         except Exception:
             return (JsonFlag.ERR_OPEN_R, json_dict)
@@ -33,12 +33,12 @@ class JsonParse():
 
         return (JsonFlag.SUCCESS, json_dict)
 
-    def file_write(self, _json_dict={}):
+    def file_write(self, _json_dict={}, encode="utf-8"):
         if not os.path.exists(self.file):
             return JsonFlag.NO_FILE
 
         try:
-            with open(self.file, mode='w+', encoding="utf-8") as fp:
+            with open(self.file, mode='w+', encoding=encode) as fp:
                 json.dump(_json_dict, fp, indent=4, ensure_ascii=False)
         except Exception:
             return JsonFlag.ERR_OPEN_W

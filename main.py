@@ -10,7 +10,7 @@ import serial.tools.list_ports
 import logwrapper as log
 import globalvar as gl
 import resrc.resource as res
-from parse_file import JsonFlag, JsonParse
+from jsonparser import JsonFlag, JsonParser
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
 from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
@@ -63,8 +63,11 @@ class MainWindow(QMainWindow):
         # menu set up
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
         self.ui.actionExit.triggered.connect(self.action_exit)
-        self.ui.actionUTF_8.triggered.connect(self.action_utf_8)
-        self.ui.actionGBK.triggered.connect(self.action_gbk)
+        self.ui.actionASCII.triggered.connect(self.action_encoding_ascii)
+        self.ui.actionUnicode.triggered.connect(self.action_encoding_unicode)
+        self.ui.actionUTF_8.triggered.connect(self.action_encoding_utf8)
+        self.ui.actionUTF_32.triggered.connect(self.action_encoding_utf32)
+        self.ui.actionGBK.triggered.connect(self.action_encoding_gbk)
         self.ui.actionAbout.triggered.connect(self.action_about)
 
         # serial port set up
@@ -141,7 +144,6 @@ class MainWindow(QMainWindow):
         self.ser_instance.timeout = gl.SerialInfo["timeout"]
 
         if not self.ser_instance.port:
-            self.log.info("No port be selected")
             self.msgbox.information(self, "Info", "No port be selected")
             return False
 
@@ -149,7 +151,7 @@ class MainWindow(QMainWindow):
             try:
                 self.ser_instance.open()
             except Exception as err:
-                self.log.error(f"Error: {str(err)}")
+                self.log.error(f"Error of opening port, err: {str(err)}")
                 if "PermissionError" in str(err):
                     self.msgbox.critical(self, "PermissionError", "The selected port may be occupied!")
                 else:
@@ -180,8 +182,9 @@ class MainWindow(QMainWindow):
         if self.ui.checkBox_sCycle.isChecked() and self.ui.checkBox_mCycle.isChecked():
             self.ui.checkBox_sCycle.click()
             self.ui.checkBox_mCycle.click()
-            self.msgbox.warning(
-                self, "Warning", "Both single cycle send and multi cycle send are activated\nDeactivate them all, please try again")
+            msg = "Both single cycle send and multi cycle send are activated\nDeactivate them all, please try again"
+            self.log.error(msg)
+            self.msgbox.warning(self, "Warning", msg)
             return False
         if self.ui.checkBox_sCycle.isChecked():
             self.single_data_send()
@@ -219,7 +222,9 @@ class MainWindow(QMainWindow):
                 if not self.is_send_hex_mode(text):
                     if self.ui.checkBox_sCycle.isChecked():
                         self.ui.checkBox_sCycle.click()
-                    self.msgbox.warning(self, "Warning", "Not correct hex format")
+                    msg = "Not correct hex format datas"
+                    self.log.warning(msg)
+                    self.msgbox.warning(self, "Warning", msg)
                     return False
                 text_list = re.findall(".{2}", text.replace(" ", ""))
                 str_text = " ".join(text_list)
@@ -246,12 +251,13 @@ class MainWindow(QMainWindow):
             send_text = self.ui.textEdit_sSend.toPlainText()
             if not self.ser_instance.isOpen():
                 msg = "Please open a port first"
-            if not cycle_text:
+            elif not cycle_text:
                 msg = "Please set cycle time first"
-            if not send_text:
+            elif cycle_text == "0":
+                msg = "Cycle send time should be greater than 0"
+            elif not send_text:
                 msg = "Please fill send datas first"
             if msg:
-                self.log.info(f"Info: {msg}")
                 self.msgbox.information(self, "Info", msg)
                 self.ui.checkBox_sCycle.setChecked(False)
                 return False
@@ -270,7 +276,7 @@ class MainWindow(QMainWindow):
             str_text = text.encode(self.encode_info, "replace").hex(" ")
         else:
             if not self.is_send_hex_mode(text):
-                self.msgbox.warning(self, "Warning", "Not correct hex format")
+                self.msgbox.warning(self, "Warning", "Incorrect hex format datas, can't convert to text format")
                 self.ui.checkBox_sHexmode.setChecked(True)
                 return False
             str_text = bytes.fromhex(text.replace(" ", "")).decode(self.encode_info, "replace")
@@ -393,7 +399,7 @@ class MainWindow(QMainWindow):
             cycle_text = self.ui.lineEdit_mCycle.text()
             if not self.ser_instance.isOpen():
                 msg = "Please open a port first"
-            if not cycle_text:
+            elif not cycle_text:
                 msg = "Please set cycle time first"
             if msg:
                 self.msgbox.information(self, "Info", msg)
@@ -435,13 +441,14 @@ class MainWindow(QMainWindow):
         if not sfile or not os.path.exists(sfile):
             self.msgbox.information(self, "Info", "the file is not existed")
             return False
+        encode = self.predict_encoding(sfile)
 
         basename = os.path.basename(sfile)
         self.js_send_list.clear()
         if "json" in basename:
             # for json file
-            jsparser = JsonParse(sfile)
-            ret = jsparser.file_read()
+            jsparser = JsonParser(sfile)
+            ret = jsparser.file_read(encode)
             if not ret[0].value == JsonFlag.SUCCESS.value:
                 msgtext = f'Error of reading json fie, err: {ret[0].name}'
                 self.log.error(msgtext)
@@ -461,13 +468,12 @@ class MainWindow(QMainWindow):
                         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
         else:
             # for txt file
-            encode = self.predict_encoding(sfile)
             try:
-                with open(sfile, mode='r', encoding=encode) as fp:
+                with open(sfile, mode='r', encoding=encode, newline='') as fp:
                     send_text = fp.read()
             except Exception as e:
                 msgtext = "Error of opening file"
-                self.log.error(f'{msgtext}: {e}')
+                self.log.error(f'{msgtext}, err: {e}')
                 self.msgbox.critical(self, "Error", msgtext)
                 return False
             if self.ser_instance.isOpen():
@@ -574,14 +580,44 @@ class MainWindow(QMainWindow):
         # self.msgbox.information(self, "About", gl.AboutInfo)
         self.about.show()
 
-    def action_utf_8(self):
+    def action_encoding_ascii(self):
+        self.ui.actionASCII.setChecked(True)
+        self.ui.actionUnicode.setChecked(False)
+        self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_32.setChecked(False)
+        self.ui.actionGBK.setChecked(False)
+        self.encode_info = "ascii"
+
+    def action_encoding_unicode(self):
+        self.ui.actionUnicode.setChecked(True)
+        self.ui.actionASCII.setChecked(False)
+        self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_32.setChecked(False)
+        self.ui.actionGBK.setChecked(False)
+        self.encode_info = "unicode"
+
+    def action_encoding_utf8(self):
         self.ui.actionUTF_8.setChecked(True)
+        self.ui.actionASCII.setChecked(False)
+        self.ui.actionUnicode.setChecked(False)
+        self.ui.actionUTF_32.setChecked(False)
         self.ui.actionGBK.setChecked(False)
         self.encode_info = "utf-8"
 
-    def action_gbk(self):
+    def action_encoding_utf32(self):
+        self.ui.actionUTF_32.setChecked(True)
+        self.ui.actionASCII.setChecked(False)
+        self.ui.actionUnicode.setChecked(False)
         self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionGBK.setChecked(False)
+        self.encode_info = "utf-32"
+
+    def action_encoding_gbk(self):
         self.ui.actionGBK.setChecked(True)
+        self.ui.actionASCII.setChecked(False)
+        self.ui.actionUnicode.setChecked(False)
+        self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_32.setChecked(False)
         self.encode_info = "gbk"
 
     def closeEvent(self, event):

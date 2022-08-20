@@ -891,13 +891,19 @@
    </widget>
    <widget class="QMenu" name="menuSetting">
     <property name="title">
-     <string>Setting</string>
+     <string>Settings</string>
     </property>
     <widget class="QMenu" name="menuEncoding_Type">
      <property name="title">
       <string>Encoding Set</string>
      </property>
+     <addaction name="actionASCII"/>
+     <addaction name="separator"/>
+     <addaction name="actionUnicode"/>
+     <addaction name="separator"/>
      <addaction name="actionUTF_8"/>
+     <addaction name="separator"/>
+     <addaction name="actionUTF_32"/>
      <addaction name="separator"/>
      <addaction name="actionGBK"/>
     </widget>
@@ -939,7 +945,31 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>GBK</string>
+    <string>GBK/GB2312</string>
+   </property>
+  </action>
+  <action name="actionASCII">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ASCII</string>
+   </property>
+  </action>
+  <action name="actionUnicode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Unicode</string>
+   </property>
+  </action>
+  <action name="actionUTF_32">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>UTF-32</string>
    </property>
   </action>
  </widget>

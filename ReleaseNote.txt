@@ -1,9 +1,14 @@
 ﻿Release Note:
 
+v1.1.1:
+    add some encoding options.
+    fix new line issue in file send.
+    some minor changes.
+
 v1.1.0:
     add multi send function.
     add file send function.
 
 v1.0.0:
     initial version.
-    implement with pyside6 and pyserial libs.
+    implement with pyside6 and pyserial packages.
