@@ -64,10 +64,10 @@ class MainWindow(QMainWindow):
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
         self.ui.actionExit.triggered.connect(self.action_exit)
         self.ui.actionASCII.triggered.connect(self.action_encoding_ascii)
-        self.ui.actionUnicode.triggered.connect(self.action_encoding_unicode)
         self.ui.actionUTF_8.triggered.connect(self.action_encoding_utf8)
+        self.ui.actionUTF_16.triggered.connect(self.action_encoding_utf16)
         self.ui.actionUTF_32.triggered.connect(self.action_encoding_utf32)
-        self.ui.actionGBK.triggered.connect(self.action_encoding_gbk)
+        self.ui.actionGBK_GB2312.triggered.connect(self.action_encoding_gbk)
         self.ui.actionAbout.triggered.connect(self.action_about)
 
         # serial port set up
@@ -582,41 +582,41 @@ class MainWindow(QMainWindow):
 
     def action_encoding_ascii(self):
         self.ui.actionASCII.setChecked(True)
-        self.ui.actionUnicode.setChecked(False)
         self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_16.setChecked(False)
         self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK.setChecked(False)
+        self.ui.actionGBK_GB2312.setChecked(False)
         self.encode_info = "ascii"
-
-    def action_encoding_unicode(self):
-        self.ui.actionUnicode.setChecked(True)
-        self.ui.actionASCII.setChecked(False)
-        self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK.setChecked(False)
-        self.encode_info = "unicode"
 
     def action_encoding_utf8(self):
         self.ui.actionUTF_8.setChecked(True)
         self.ui.actionASCII.setChecked(False)
-        self.ui.actionUnicode.setChecked(False)
+        self.ui.actionUTF_16.setChecked(False)
         self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK.setChecked(False)
+        self.ui.actionGBK_GB2312.setChecked(False)
         self.encode_info = "utf-8"
+
+    def action_encoding_utf16(self):
+        self.ui.actionUTF_16.setChecked(True)
+        self.ui.actionASCII.setChecked(False)
+        self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_32.setChecked(False)
+        self.ui.actionGBK_GB2312.setChecked(False)
+        self.encode_info = "utf-16"
 
     def action_encoding_utf32(self):
         self.ui.actionUTF_32.setChecked(True)
         self.ui.actionASCII.setChecked(False)
-        self.ui.actionUnicode.setChecked(False)
         self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionGBK.setChecked(False)
+        self.ui.actionUTF_16.setChecked(False)
+        self.ui.actionGBK_GB2312.setChecked(False)
         self.encode_info = "utf-32"
 
     def action_encoding_gbk(self):
-        self.ui.actionGBK.setChecked(True)
+        self.ui.actionGBK_GB2312.setChecked(True)
         self.ui.actionASCII.setChecked(False)
-        self.ui.actionUnicode.setChecked(False)
         self.ui.actionUTF_8.setChecked(False)
+        self.ui.actionUTF_16.setChecked(False)
         self.ui.actionUTF_32.setChecked(False)
         self.encode_info = "gbk"
 

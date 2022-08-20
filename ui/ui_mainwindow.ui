@@ -899,13 +899,13 @@
      </property>
      <addaction name="actionASCII"/>
      <addaction name="separator"/>
-     <addaction name="actionUnicode"/>
-     <addaction name="separator"/>
      <addaction name="actionUTF_8"/>
+     <addaction name="separator"/>
+     <addaction name="actionUTF_16"/>
      <addaction name="separator"/>
      <addaction name="actionUTF_32"/>
      <addaction name="separator"/>
-     <addaction name="actionGBK"/>
+     <addaction name="actionGBK_GB2312"/>
     </widget>
     <addaction name="menuEncoding_Type"/>
    </widget>
@@ -937,17 +937,6 @@
     <string>UTF-8</string>
    </property>
   </action>
-  <action name="actionGBK">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>GBK/GB2312</string>
-   </property>
-  </action>
   <action name="actionASCII">
    <property name="checkable">
     <bool>true</bool>
@@ -956,12 +945,12 @@
     <string>ASCII</string>
    </property>
   </action>
-  <action name="actionUnicode">
+  <action name="actionUTF_16">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Unicode</string>
+    <string>UTF-16</string>
    </property>
   </action>
   <action name="actionUTF_32">
@@ -970,6 +959,17 @@
    </property>
    <property name="text">
     <string>UTF-32</string>
+   </property>
+  </action>
+  <action name="actionGBK_GB2312">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GBK/GB2312</string>
    </property>
   </action>
  </widget>
