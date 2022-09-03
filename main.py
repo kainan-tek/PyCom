@@ -9,10 +9,10 @@ import serial
 import serial.tools.list_ports
 import logwrapper as log
 import globalvar as gl
-import resrc.resource as res
+import resrc.rc_resource as res
 from jsonparser import JsonFlag, JsonParser
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
-from PySide6.QtGui import QIcon, QPixmap, QTextCursor, Qt, QIntValidator
+from PySide6.QtGui import QTextCursor, Qt, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
 from ui.ui_mainwindow import Ui_MainWindow
 from about import About
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 
     def gui_init(self):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
-        self.setWindowIcon(QIcon(QPixmap(":/icon/pycom")))
+        # self.setWindowIcon(QIcon(":/icon/pycom"))
 
         # menu set up
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
