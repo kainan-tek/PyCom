@@ -1,5 +1,9 @@
 ﻿Release Note:
 
+v1.1.2:
+    fix app close issue.
+    some minor changes.
+
 v1.1.1:
     add some encoding options.
     fix new line issue in file send.

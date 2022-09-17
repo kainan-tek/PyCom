@@ -622,9 +622,14 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.recthread.isRunning():
+            self.recthread.close_flag = True
             self.recthread.run_flag = False
             self.recthread.quit()
+            self.recthread.wait()
+            # self.recthread.exit(0)
 
+
+########################## Sub-thread for receiving data ############################
 
 class WorkThread(QThread):
     rec_signal = Signal()
