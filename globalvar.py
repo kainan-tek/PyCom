@@ -1,7 +1,5 @@
 GuiInfo = {"proj": "PyCOM",
            "version": " v1.1.2",
-           "win_tmp": "C:/temp",
-           "dbg_reldir": r"log/pycom/debug",
            "cwd": ""
            }
 

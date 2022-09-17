@@ -7,7 +7,7 @@ import string
 import chardet
 import serial
 import serial.tools.list_ports
-import logwrapper as log
+import logwrapper
 import globalvar as gl
 import resrc.rc_resource as res
 from jsonparser import JsonFlag, JsonParser
@@ -19,9 +19,9 @@ from about import About
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, log):
+    def __init__(self):
         super(MainWindow, self).__init__()
-        self.log = log
+        self.log = logwrapper.log_instance
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.about = About()
@@ -658,8 +658,7 @@ class WorkThread(QThread):
 
 
 if __name__ == "__main__":
-    logwrap = log.Log()
     app = QApplication(sys.argv)
-    window = MainWindow(logwrap)
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())

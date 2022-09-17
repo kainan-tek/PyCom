@@ -1,15 +1,19 @@
 import os
 import time
 import logging
-import globalvar as gl
+
+
+LogInfo = {"win_tmp": r"C:/temp",
+           "dbg_reldir": r"log/pycom/debug"
+           }
 
 
 class Log:
     def __init__(self):
         if "nt" in os.name:
-            dbg_dirname = os.path.normpath(os.path.join(gl.GuiInfo["win_tmp"], gl.GuiInfo["dbg_reldir"]))
+            dbg_dirname = os.path.normpath(os.path.join(LogInfo["win_tmp"], LogInfo["dbg_reldir"]))
         else:
-            dbg_dirname = os.path.join(os.path.expanduser('~'), gl.GuiInfo["dbg_reldir"])
+            dbg_dirname = os.path.join(os.path.expanduser('~'), LogInfo["dbg_reldir"])
         if not os.path.exists(dbg_dirname):
             os.makedirs(dbg_dirname, exist_ok=True)
 
@@ -70,6 +74,8 @@ class Log:
     def error(self, message):
         self.__printconsole('error', message)
 
+
+log_instance = Log()
 
 if __name__ == "__main__":
     log = Log()
