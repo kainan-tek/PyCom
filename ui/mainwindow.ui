@@ -36,10 +36,6 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../resrc/resource.qrc">
-    <normaloff>:/icon/pycom</normaloff>:/icon/pycom</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">

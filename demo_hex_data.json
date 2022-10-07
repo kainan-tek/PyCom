@@ -1,21 +1,18 @@
 {
     "cycle_ms": 1000,
+    "hexmode": 1,
     "datas": [
         {
             "select": 1,
-            "data": "test 1\r\n"
-        },
-        {
-            "select": 1,
-            "data": "中文 2\r\n"
+            "data": "02 04 1f FF fe"
         },
         {
             "select": 0,
-            "data": "test 3\r\n"
+            "data": "02 04 1f FF fe"
         },
         {
             "select": 1,
-            "data": "test 4\r\n"
+            "data": "ff fe 3f FF fa 0d 0a"
         }
     ]
 }

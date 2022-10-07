@@ -12,7 +12,7 @@ import globalvar as gl
 import resrc.rc_resource as res
 from jsonparser import JsonFlag, JsonParser
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
-from PySide6.QtGui import QTextCursor, Qt, QIntValidator
+from PySide6.QtGui import QTextCursor, Qt, QIcon, QIntValidator
 from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
 from ui.ui_mainwindow import Ui_MainWindow
 from about import About
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 
     def gui_init(self):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
-        # self.setWindowIcon(QIcon(":/icon/pycom"))
+        self.setWindowIcon(QIcon(":/icon/pycom"))
 
         # menu set up
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
@@ -456,14 +456,27 @@ class MainWindow(QMainWindow):
                 return False
             js_dict = ret[1]
             cycle_time = js_dict["cycle_ms"]
-            self.js_send_list = [[js_dict["datas"][i]["select"], 0, js_dict["datas"][i]["data"]]
-                                 for i in range(len(js_dict["datas"]))]
+            hex_mode = js_dict["hexmode"]
+            if hex_mode:
+                for i in range(len(js_dict["datas"])):
+                    text_lst = re.findall(".{2}", js_dict["datas"][i]["data"].replace(" ", ""))
+                    int_lst = [int(item, 16) for item in text_lst]
+                    js_dict["datas"][i]["data"] = bytes(int_lst)
+                self.js_send_list = [[js_dict["datas"][i]["select"], 1, 0, js_dict["datas"][i]["data"]]
+                                     for i in range(len(js_dict["datas"]))]
+            else:
+                # self.js_send_list[is_select is_hexmode is_sent data]
+                self.js_send_list = [[js_dict["datas"][i]["select"], 0, 0, js_dict["datas"][i]["data"]]
+                                     for i in range(len(js_dict["datas"]))]
             if cycle_time > 0:
                 self.fsend_timer.start(cycle_time)
             else:
                 for item in self.js_send_list:
-                    if item[0] == 1:
-                        sendsize = self.ser_instance.write(item[2].encode(self.encode_info, "ignore"))
+                    if item[0] == 1:  # selected
+                        if item[1] == 1:  # hex mode
+                            sendsize = self.ser_instance.write(item[3])
+                        else:
+                            sendsize = self.ser_instance.write(item[3].encode(self.encode_info, "ignore"))
                         self.total_sendsize = self.total_sendsize+sendsize
                         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
         else:
@@ -483,13 +496,16 @@ class MainWindow(QMainWindow):
 
     def jsfile_data_send(self):
         for item in self.js_send_list:
-            if item[0] == 1 and item[1] == 0:
-                sendsize = self.ser_instance.write(item[2].encode(self.encode_info, "ignore"))
-                item[1] = 1
+            if item[0] == 1 and item[2] == 0:  # selected and not sent
+                if item[1] == 1:  # hex mode
+                    sendsize = self.ser_instance.write(item[3])
+                else:
+                    sendsize = self.ser_instance.write(item[3].encode(self.encode_info, "ignore"))
+                item[2] = 1
                 self.total_sendsize = self.total_sendsize+sendsize
                 self.update_rwsize_status(self.total_sendsize, self.total_recsize)
                 break
-        if all(item[1] == 1 for item in self.js_send_list if item[0] == 1):
+        if all(item[2] == 1 for item in self.js_send_list if item[0] == 1):
             self.fsend_timer.stop()
 
 ########################## receive function ############################

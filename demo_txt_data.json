@@ -1,0 +1,22 @@
+{
+    "cycle_ms": 1000,
+    "hexmode": 0,
+    "datas": [
+        {
+            "select": 1,
+            "data": "test 1\r\n"
+        },
+        {
+            "select": 1,
+            "data": "中文 2\r\n"
+        },
+        {
+            "select": 0,
+            "data": "test 3\r\n"
+        },
+        {
+            "select": 1,
+            "data": "test 4\r\n"
+        }
+    ]
+}
