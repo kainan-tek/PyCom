@@ -1,5 +1,5 @@
 GuiInfo = {"proj": "PyCOM",
-           "version": " v1.1.2",
+           "version": " v1.2.0",
            "cwd": ""
            }
 
@@ -35,7 +35,8 @@ GuideInfo = """
       Support txt file and json file.
       1. for txt file: just send the file contents directly with Send button.
       2. for json file: it is similar to multi send function, user can customize the datas and cycle time.
-      check the details in demo_data.json file, the meaning of the tags as below.
-      cycle_ms tag: 0: send all selected items directly. 1000: send all selected items with the cycle time.
+      check the details in demo_txt_data.json or demo_hex_data.json, the meaning of the tags as below.
+      cycle_ms tag: 0: send all selected items directly; 1000: send all selected items with the cycle time.
+      hexmode tag: 0: send all selected items as txt contents; 1: send all selected items as hex contents.
       select tag: 0: the data is selected to be sent; 1: the data is not selected to be sent.
 """

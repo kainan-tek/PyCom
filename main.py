@@ -460,6 +460,9 @@ class MainWindow(QMainWindow):
             if hex_mode:
                 for i in range(len(js_dict["datas"])):
                     text_lst = re.findall(".{2}", js_dict["datas"][i]["data"].replace(" ", ""))
+                    if not all(item in string.hexdigits for item in text_lst):
+                        self.msgbox.critical(self, "Error", "Not all contents are hex mode, please check.")
+                        return False
                     int_lst = [int(item, 16) for item in text_lst]
                     js_dict["datas"][i]["data"] = bytes(int_lst)
                 self.js_send_list = [[js_dict["datas"][i]["select"], 1, 0, js_dict["datas"][i]["data"]]

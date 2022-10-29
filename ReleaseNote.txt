@@ -1,5 +1,8 @@
 ﻿Release Note:
 
+v1.2.0:
+    some minor changes.
+
 v1.1.2:
     add hex mode for json file send function.
     fix app close issue.
