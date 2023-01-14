@@ -1,21 +1,24 @@
 import os
+import queue
 import re
+import string
 import sys
 import time
-import queue
-import string
+
 import chardet
 import serial
 import serial.tools.list_ports
-import logwrapper
+from PySide6.QtCore import QEvent, QMutex, QThread, QTimer, Signal
+from PySide6.QtGui import QIcon, QIntValidator, Qt, QTextCursor
+from PySide6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
+                               QMessageBox)
+
 import globalvar as gl
+import logwrapper
 import resrc.rc_resource as res
-from jsonparser import JsonFlag, JsonParser
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QLabel
-from PySide6.QtGui import QTextCursor, Qt, QIcon, QIntValidator
-from PySide6.QtCore import QThread, QTimer, Signal, QMutex, QEvent
-from ui.ui_mainwindow import Ui_MainWindow
 from about import About
+from jsonparser import JsonFlag, JsonParser
+from ui.ui_mainwindow import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):

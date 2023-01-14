@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QTextCursor
-from ui.ui_about import Ui_About
+from PySide6.QtWidgets import QWidget
+
 import globalvar as gl
+from ui.ui_about import Ui_About
 
 
 class About(QWidget):

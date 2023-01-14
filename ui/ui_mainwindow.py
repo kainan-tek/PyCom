@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.0
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -287,8 +287,13 @@ class Ui_MainWindow(object):
         self.menuAbout.setFont(font1)
         self.menuSetting = QMenu(self.menubar)
         self.menuSetting.setObjectName(u"menuSetting")
+        self.menuSetting.setFont(font)
         self.menuEncoding_Type = QMenu(self.menuSetting)
         self.menuEncoding_Type.setObjectName(u"menuEncoding_Type")
+        font3 = QFont()
+        font3.setPointSize(9)
+        font3.setBold(False)
+        self.menuEncoding_Type.setFont(font3)
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")

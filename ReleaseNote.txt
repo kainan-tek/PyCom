@@ -1,4 +1,6 @@
 ﻿Release Note:
+v1.2.1:
+    some minor changes.
 
 v1.2.0:
     some minor changes.

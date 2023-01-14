@@ -1,7 +1,6 @@
+import logging
 import os
 import time
-import logging
-
 
 LogInfo = {"win_tmp": r"C:/temp",
            "dbg_reldir": r"log/pycom/debug"
