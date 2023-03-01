@@ -18,7 +18,7 @@ AboutInfo = f"""
     Version: {GuiInfo["version"]}
 
     Support: kainanos@outlook.com
-    Github Repo: https://github.com/kainan2020/PyCom
+    Github Repo: https://github.com/kainan-tek/PyCom
 """
 
 
