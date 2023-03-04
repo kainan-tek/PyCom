@@ -419,7 +419,8 @@ class MainWindow(QMainWindow):
 ########################## file send function ############################
 
     def file_send_select(self):
-        self.dialog.setFileMode(QFileDialog.AnyFile)
+        self.dialog.setFileMode(QFileDialog.ExistingFile)
+        self.dialog.setNameFilter("TXT File(*.txt *.json)")
         self.dialog.setViewMode(QFileDialog.Detail)
         if not self.dialog.exec():
             return False
@@ -462,10 +463,11 @@ class MainWindow(QMainWindow):
             hex_mode = js_dict["hexmode"]
             if hex_mode:
                 for i in range(len(js_dict["datas"])):
-                    text_lst = re.findall(".{2}", js_dict["datas"][i]["data"].replace(" ", ""))
-                    if not all(item in string.hexdigits for item in text_lst):
-                        self.msgbox.critical(self, "Error", "Not all contents are hex mode, please check.")
+                    str_data=js_dict["datas"][i]["data"].replace(" ", "")
+                    if not all(item in string.hexdigits for item in str_data):
+                        self.msgbox.critical(self, "Error", "Not every item is hex digit, please check.")
                         return False
+                    text_lst = re.findall(".{2}", str_data)
                     int_lst = [int(item, 16) for item in text_lst]
                     js_dict["datas"][i]["data"] = bytes(int_lst)
                 self.js_send_list = [[js_dict["datas"][i]["select"], 1, 0, js_dict["datas"][i]["data"]]
@@ -552,7 +554,7 @@ class MainWindow(QMainWindow):
         self.mutex.unlock()
 
     def receive_save(self):
-        self.dialog.setFileMode(QFileDialog.ExistingFile)
+        self.dialog.setFileMode(QFileDialog.AnyFile)
         self.dialog.setNameFilter("TXT File(*.txt)")
         self.dialog.setViewMode(QFileDialog.Detail)
         if not self.dialog.exec():

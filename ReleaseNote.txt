@@ -1,5 +1,6 @@
 ﻿Release Note:
 v1.2.1:
+    fix error of sending json hex contents.
     some minor changes.
 
 v1.2.0:
