@@ -15,10 +15,10 @@ from PySide6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
 
 import globalvar as gl
 import logwrapper
-import resrc.rc_resource as res
+import resrc.resource_rc as res
 from about import About
 from jsonparser import JsonFlag, JsonParser
-from ui.ui_mainwindow import Ui_MainWindow
+from ui.mainwindow_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):

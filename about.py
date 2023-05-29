@@ -2,7 +2,7 @@ from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QWidget
 
 import globalvar as gl
-from ui.ui_about import Ui_About
+from ui.about_ui import Ui_About
 
 
 class About(QWidget):
