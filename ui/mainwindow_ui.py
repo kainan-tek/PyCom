@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -346,6 +346,14 @@ class Ui_MainWindow(object):
         self.pushButton_Open.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.pushButton_Close.setText(QCoreApplication.translate("MainWindow", u"Close", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Send", None))
+        self.textEdit_sSend.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#0000ff;\">https://github.com/kainan-tek/PyCom</span></p></body></html>", None))
         self.checkBox_sCycle.setText(QCoreApplication.translate("MainWindow", u"Cycle(ms)", None))
         self.lineEdit_sCycle.setText(QCoreApplication.translate("MainWindow", u"1000", None))
         self.checkBox_sNewline.setText(QCoreApplication.translate("MainWindow", u"NewLine", None))

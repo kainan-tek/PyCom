@@ -350,45 +350,21 @@ class MainWindow(QMainWindow):
         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def multi_cycle_send(self):
-        if self.ui.checkBox_m1.isChecked():
-            self.multi_dict["m1"][0] = 1
-            if not self.ui.lineEdit_m1.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m1"][0] = 0
-        if self.ui.checkBox_m2.isChecked():
-            self.multi_dict["m2"][0] = 1
-            if not self.ui.lineEdit_m2.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m2"][0] = 0
-        if self.ui.checkBox_m3.isChecked():
-            self.multi_dict["m3"][0] = 1
-            if not self.ui.lineEdit_m3.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m3"][0] = 0
-        if self.ui.checkBox_m4.isChecked():
-            self.multi_dict["m4"][0] = 1
-            if not self.ui.lineEdit_m4.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m4"][0] = 0
-        if self.ui.checkBox_m5.isChecked():
-            self.multi_dict["m5"][0] = 1
-            if not self.ui.lineEdit_m5.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m5"][0] = 0
-        if self.ui.checkBox_m6.isChecked():
-            self.multi_dict["m6"][0] = 1
-            if not self.ui.lineEdit_m6.text() and not self.ui.checkBox_mNewLine.isChecked():
-                self.multi_dict["m6"][0] = 0
+        self.multi_dict["m1"][0] = 1 if self.ui.checkBox_m1.isChecked() and self.ui.lineEdit_m1.text() else 0
+        self.multi_dict["m2"][0] = 1 if self.ui.checkBox_m2.isChecked() and self.ui.lineEdit_m2.text() else 0
+        self.multi_dict["m3"][0] = 1 if self.ui.checkBox_m3.isChecked() and self.ui.lineEdit_m3.text() else 0
+        self.multi_dict["m4"][0] = 1 if self.ui.checkBox_m4.isChecked() and self.ui.lineEdit_m4.text() else 0
+        self.multi_dict["m5"][0] = 1 if self.ui.checkBox_m5.isChecked() and self.ui.lineEdit_m5.text() else 0
+        self.multi_dict["m6"][0] = 1 if self.ui.checkBox_m6.isChecked() and self.ui.lineEdit_m6.text() else 0
 
         for item in self.multi_dict:
             if self.multi_dict[item][0] == 1 and self.multi_dict[item][1] == 0:
-                if item == "m1":
-                    self.multi_send_m1()
-                elif item == "m2":
-                    self.multi_send_m2()
-                elif item == "m3":
-                    self.multi_send_m3()
-                elif item == "m4":
-                    self.multi_send_m4()
-                elif item == "m5":
-                    self.multi_send_m5()
-                elif item == "m6":
-                    self.multi_send_m6()
+                self.multi_send_m1() if item == "m1" else 0
+                self.multi_send_m2() if item == "m2" else 0
+                self.multi_send_m3() if item == "m3" else 0
+                self.multi_send_m4() if item == "m4" else 0
+                self.multi_send_m5() if item == "m5" else 0
+                self.multi_send_m6() if item == "m6" else 0
                 self.multi_dict[item][1] = 1
                 break
 
@@ -463,7 +439,7 @@ class MainWindow(QMainWindow):
             hex_mode = js_dict["hexmode"]
             if hex_mode:
                 for i in range(len(js_dict["datas"])):
-                    str_data=js_dict["datas"][i]["data"].replace(" ", "")
+                    str_data = js_dict["datas"][i]["data"].replace(" ", "")
                     if not all(item in string.hexdigits for item in str_data):
                         self.msgbox.critical(self, "Error", "Not every item is hex digit, please check.")
                         return False
@@ -605,44 +581,27 @@ class MainWindow(QMainWindow):
         self.about.show()
 
     def action_encoding_ascii(self):
-        self.ui.actionASCII.setChecked(True)
-        self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionUTF_16.setChecked(False)
-        self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK_GB2312.setChecked(False)
-        self.encode_info = "ascii"
+        self.set_encoding("ascii")
 
     def action_encoding_utf8(self):
-        self.ui.actionUTF_8.setChecked(True)
-        self.ui.actionASCII.setChecked(False)
-        self.ui.actionUTF_16.setChecked(False)
-        self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK_GB2312.setChecked(False)
-        self.encode_info = "utf-8"
+        self.set_encoding("utf-8")
 
     def action_encoding_utf16(self):
-        self.ui.actionUTF_16.setChecked(True)
-        self.ui.actionASCII.setChecked(False)
-        self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionUTF_32.setChecked(False)
-        self.ui.actionGBK_GB2312.setChecked(False)
-        self.encode_info = "utf-16"
+        self.set_encoding("utf-16")
 
     def action_encoding_utf32(self):
-        self.ui.actionUTF_32.setChecked(True)
-        self.ui.actionASCII.setChecked(False)
-        self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionUTF_16.setChecked(False)
-        self.ui.actionGBK_GB2312.setChecked(False)
-        self.encode_info = "utf-32"
+        self.set_encoding("utf-32")
 
     def action_encoding_gbk(self):
-        self.ui.actionGBK_GB2312.setChecked(True)
-        self.ui.actionASCII.setChecked(False)
-        self.ui.actionUTF_8.setChecked(False)
-        self.ui.actionUTF_16.setChecked(False)
-        self.ui.actionUTF_32.setChecked(False)
-        self.encode_info = "gbk"
+        self.set_encoding("gbk")
+
+    def set_encoding(self, encode):
+        self.ui.actionASCII.setChecked(True if encode == "ascii" else False)
+        self.ui.actionUTF_8.setChecked(True if encode == "utf-8" else False)
+        self.ui.actionUTF_16.setChecked(True if encode == "utf-16" else False)
+        self.ui.actionUTF_32.setChecked(True if encode == "utf-32" else False)
+        self.ui.actionGBK_GB2312.setChecked(True if encode == "gbk" else False)
+        self.encode_info = encode
 
     def closeEvent(self, event):
         if self.recthread.isRunning():

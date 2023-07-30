@@ -1,4 +1,7 @@
-﻿Release Note:
+Release Note:
+v1.2.2:
+    some minor changes.
+
 v1.2.1:
     fix error of sending json hex contents.
     some minor changes.
