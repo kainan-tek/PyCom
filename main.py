@@ -10,8 +10,7 @@ import serial
 import serial.tools.list_ports
 from PySide6.QtCore import QEvent, QMutex, QThread, QTimer, Signal
 from PySide6.QtGui import QIcon, QIntValidator, Qt, QTextCursor
-from PySide6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
-                               QMessageBox)
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 
 import globalvar as gl
 import logwrapper
@@ -564,11 +563,10 @@ class MainWindow(QMainWindow):
         if not os.path.exists(self.recdatas_file):
             self.msgbox.information(self, "Info", "Please save a receive datas file first")
             return False
-        dir_name = os.path.dirname(self.recdatas_file)
         if "nt" in os.name:
-            os.startfile(dir_name)
+            os.startfile(os.path.dirname(self.recdatas_file))
         else:
-            os.system(f'xdg-open {dir_name}')
+            os.system(f'xdg-open {os.path.dirname(self.recdatas_file)}')
 
     def action_exit(self):
         if self.recthread.isRunning():

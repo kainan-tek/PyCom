@@ -2,76 +2,60 @@ import logging
 import os
 import time
 
-LogInfo = {"win_tmp": r"C:/temp",
-           "dbg_reldir": r"log/pycom/debug"
-           }
-
 
 class Log:
     def __init__(self):
-        if "nt" in os.name:
-            dbg_dirname = os.path.normpath(os.path.join(LogInfo["win_tmp"], LogInfo["dbg_reldir"]))
-        else:
-            dbg_dirname = os.path.join(os.path.expanduser('~'), LogInfo["dbg_reldir"])
-        if not os.path.exists(dbg_dirname):
-            os.makedirs(dbg_dirname, exist_ok=True)
+        log_dirname = os.path.join(os.path.expanduser('~'), "log/pycom")
+        if not os.path.exists(log_dirname):
+            os.makedirs(log_dirname, exist_ok=True)
 
         time_now = time.strftime("%Y-%m-%d--%H-%M-%S")
-        self.logname = os.path.normpath(os.path.join(dbg_dirname, f'{time_now}.log'))
+        logname = os.path.normpath(os.path.join(log_dirname, f'{time_now}.log'))
 
-    def __printconsole(self, level, message):
-        # 创建一个logger
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
 
-        # 创建一个handler，用于写入日志文件
-        fh = logging.FileHandler(self.logname, 'a', encoding='utf-8')
+        fh = logging.FileHandler(logname, 'a', encoding='utf-8')
         # fh = logging.handlers.TimedRotatingFileHandler(
-        #     filename=self.logname, when='D', interval=1, backupCount=10, encoding='utf-8')
+        #     filename=logname, when='D', interval=1, backupCount=10, encoding='utf-8')
         # fh.suffix = "%Y%m%d-%H%M.log"
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
 
-        # 再创建一个handler，用于输出到控制台
         ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
+        ch.setLevel(logging.INFO)
 
-        # 定义handler的输出格式
         formatter = logging.Formatter('[%(asctime)s] - %(filename)s [Line:%(lineno)d] - [%(levelname)s] - %(message)s')
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
 
-        # 给logger添加handler
-        logger.addHandler(fh)
-        logger.addHandler(ch)
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
 
-        # 记录一条日志
+        # logger.removeHandler(ch)
+        # logger.removeHandler(fh)
+        # fh.close()
+
+    def __print_log(self, level, msg):
         if level == 'info':
-            logger.info(message)
+            self.logger.info(msg)
         elif level == 'debug':
-            logger.debug(message)
+            self.logger.debug(msg)
         elif level == 'warning':
-            logger.warning(message)
+            self.logger.warning(msg)
         elif level == 'error':
-            logger.error(message)
+            self.logger.error(msg)
 
-        # 记录完日志移除句柄Handler
-        logger.removeHandler(ch)
-        logger.removeHandler(fh)
+    def debug(self, msg):
+        self.__print_log('debug', msg)
 
-        # 关闭打开的文件
-        fh.close()
+    def info(self, msg):
+        self.__print_log('info', msg)
 
-    def debug(self, message):
-        self.__printconsole('debug', message)
+    def warning(self, msg):
+        self.__print_log('warning', msg)
 
-    def info(self, message):
-        self.__printconsole('info', message)
-
-    def warning(self, message):
-        self.__printconsole('warning', message)
-
-    def error(self, message):
-        self.__printconsole('error', message)
+    def error(self, msg):
+        self.__print_log('error', msg)
 
 
 log_instance = Log()
