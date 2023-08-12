@@ -1,4 +1,7 @@
 Release Note:
+v1.2.3:
+    fix log print issue.
+
 v1.2.2:
     some minor changes.
 
