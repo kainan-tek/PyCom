@@ -10,7 +10,8 @@ import serial
 import serial.tools.list_ports
 from PySide6.QtCore import QEvent, QMutex, QThread, QTimer, Signal
 from PySide6.QtGui import QIcon, QIntValidator, Qt, QTextCursor
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
+from PySide6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
+                               QMessageBox)
 
 import globalvar as gl
 import logwrapper
