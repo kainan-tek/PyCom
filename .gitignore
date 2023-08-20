@@ -1,6 +1,8 @@
 # user define
 *.vscode
 *.qt_for_python
+*.build
+*.dist
 
 
 # Byte-compiled / optimized / DLL files

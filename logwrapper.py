@@ -41,4 +41,9 @@ class Log:
 log_inst = Log()
 
 if __name__ == "__main__":
+    # log_inst.logger.debug("test")
     log_inst.logger.info("test")
+    # log_inst.logger.warning("test")
+    # log_inst.logger.error("test")
+    # log_inst.logger.critical("test")
+    # log_inst.logger.exception("test")

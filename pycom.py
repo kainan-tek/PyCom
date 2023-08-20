@@ -42,7 +42,6 @@ class MainWindow(QMainWindow):
         self.js_send_list = []
         self.mutex = QMutex()
         self.msgbox = QMessageBox()
-        self.dialog = QFileDialog()
         self.ser_instance = serial.Serial()
         self.send_timer = QTimer()
         self.send_timer.timeout.connect(self.data_send)
@@ -395,12 +394,16 @@ class MainWindow(QMainWindow):
 ########################## file send function ############################
 
     def file_send_select(self):
-        self.dialog.setFileMode(QFileDialog.ExistingFile)
-        self.dialog.setNameFilter("TXT File(*.txt *.json)")
-        self.dialog.setViewMode(QFileDialog.Detail)
-        if not self.dialog.exec():
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setViewMode(QFileDialog.Detail)
+        dialog.setWindowTitle('Open File')
+        dialog.setNameFilter("TXT File(*.txt *.json)")
+        if not dialog.exec():
             return False
-        file_name = self.dialog.selectedFiles()[0]
+        file_name = dialog.selectedFiles()[0]
+        # file_name,_ = self.dialog.getOpenFileName(
+        #     self, 'Open File', '', 'TXT File(*.txt *.json)', '', QFileDialog.DontUseNativeDialog)
         if not file_name:
             return False
         self.log.info(f"send file: {file_name}")
@@ -530,12 +533,13 @@ class MainWindow(QMainWindow):
         self.mutex.unlock()
 
     def receive_save(self):
-        self.dialog.setFileMode(QFileDialog.AnyFile)
-        self.dialog.setNameFilter("TXT File(*.txt)")
-        self.dialog.setViewMode(QFileDialog.Detail)
-        if not self.dialog.exec():
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setViewMode(QFileDialog.Detail)
+        dialog.setNameFilter("TXT File(*.txt)")
+        if not dialog.exec():
             return False
-        self.recdatas_file = self.dialog.selectedFiles()[0]
+        self.recdatas_file = dialog.selectedFiles()[0]
         if not self.recdatas_file:
             self.log.info("No file be selected to save the received datas")
             return False
@@ -639,8 +643,12 @@ class WorkThread(QThread):
             time.sleep(0.01)
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
