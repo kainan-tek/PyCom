@@ -1,9 +1,7 @@
 Release Note:
-v1.2.4:
+v1.2.3:
     change main.py to pycom.py.
     add pack cmd with nuitka.
-
-v1.2.3:
     fix log print issue.
 
 v1.2.2:
