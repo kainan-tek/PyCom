@@ -47,7 +47,6 @@ class MainWindow(QMainWindow):
         self.send_timer.timeout.connect(self.data_send)
         self.fsend_timer = QTimer()
         self.fsend_timer.timeout.connect(self.jsfile_data_send)
-
         self.recthread = WorkThread(self.ser_instance)
         self.recthread.rec_signal.connect(self.update_receive_ui)
         self.recthread.close_signal.connect(self.post_close_port)
@@ -170,7 +169,7 @@ class MainWindow(QMainWindow):
             self.ui.checkBox_mCycle.click()
         self.fsend_timer.stop()
         if self.ser_instance.isOpen():
-            self.recthread.close_flag = True  # triger the serial close function in receive thread
+            self.recthread.port_close_flag = True  # triger the serial close function in receive thread
             # self.ser_instance.close()  # the serial readall function in receive thread may crash
 
     def post_close_port(self):
@@ -575,8 +574,9 @@ class MainWindow(QMainWindow):
 
     def action_exit(self):
         if self.recthread.isRunning():
-            self.recthread.run_flag = False
+            self.recthread.requestInterruption()
             self.recthread.quit()
+            self.recthread.wait()
         sys.exit()
 
     def action_about(self):
@@ -608,11 +608,11 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.recthread.isRunning():
-            self.recthread.close_flag = True
-            self.recthread.run_flag = False
+            self.recthread.requestInterruption()
             self.recthread.quit()
             self.recthread.wait()
-            # self.recthread.exit(0)
+        self.recthread.deleteLater()
+        super(MainWindow, self).closeEvent(event)
 
 
 ########################## Sub-thread for receiving data ############################
@@ -623,22 +623,23 @@ class WorkThread(QThread):
 
     def __init__(self, ser, parent=None):
         super(WorkThread, self).__init__(parent)
-        self.run_flag = True
         self.ser = ser
-        self.close_flag = False
+        self.port_close_flag = False
         self.recqueue = queue.Queue(50)
 
     def run(self):
-        while self.run_flag:
+        while True:
             if self.ser.isOpen():
                 datas = self.ser.readall()
                 if datas:
                     self.recqueue.put_nowait(datas)
+            if self.isInterruptionRequested():
+                break
             if not self.recqueue.empty():
                 self.rec_signal.emit()
-            if self.close_flag:
+            if self.port_close_flag:
                 self.ser.close()
-                self.close_flag = False
+                self.port_close_flag = False
                 self.close_signal.emit()
             time.sleep(0.01)
 
