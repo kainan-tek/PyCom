@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainwindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(700, 510)
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -254,24 +254,24 @@ class Ui_MainWindow(object):
         self.plainTextEdit_Guide.setFrameShadow(QFrame.Plain)
         self.plainTextEdit_Guide.setReadOnly(True)
         self.SendTab.addTab(self.guide, "")
-        self.groupBox_21 = QGroupBox(self.centralwidget)
-        self.groupBox_21.setObjectName(u"groupBox_21")
-        self.groupBox_21.setGeometry(QRect(200, 3, 496, 306))
-        self.groupBox_21.setAutoFillBackground(True)
-        self.groupBox_21.setFlat(False)
-        self.textEdit_Receive = QTextEdit(self.groupBox_21)
+        self.groupBox_3 = QGroupBox(self.centralwidget)
+        self.groupBox_3.setObjectName(u"groupBox_3")
+        self.groupBox_3.setGeometry(QRect(200, 3, 496, 306))
+        self.groupBox_3.setAutoFillBackground(True)
+        self.groupBox_3.setFlat(False)
+        self.textEdit_Receive = QTextEdit(self.groupBox_3)
         self.textEdit_Receive.setObjectName(u"textEdit_Receive")
         self.textEdit_Receive.setGeometry(QRect(5, 20, 486, 251))
         self.textEdit_Receive.setFrameShape(QFrame.Panel)
         self.textEdit_Receive.setFrameShadow(QFrame.Sunken)
         self.textEdit_Receive.setReadOnly(True)
-        self.checkBox_RHexmode = QCheckBox(self.groupBox_21)
+        self.checkBox_RHexmode = QCheckBox(self.groupBox_3)
         self.checkBox_RHexmode.setObjectName(u"checkBox_RHexmode")
         self.checkBox_RHexmode.setGeometry(QRect(215, 275, 79, 26))
-        self.pushButton_RClear = QPushButton(self.groupBox_21)
+        self.pushButton_RClear = QPushButton(self.groupBox_3)
         self.pushButton_RClear.setObjectName(u"pushButton_RClear")
         self.pushButton_RClear.setGeometry(QRect(315, 275, 71, 26))
-        self.pushButton_RSave = QPushButton(self.groupBox_21)
+        self.pushButton_RSave = QPushButton(self.groupBox_3)
         self.pushButton_RSave.setObjectName(u"pushButton_RSave")
         self.pushButton_RSave.setGeometry(QRect(405, 275, 71, 26))
         MainWindow.setCentralWidget(self.centralwidget)
@@ -384,7 +384,7 @@ class Ui_MainWindow(object):
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"support: 1. txt file   2. customized json file", None))
         self.SendTab.setTabText(self.SendTab.indexOf(self.file), QCoreApplication.translate("MainWindow", u"File", None))
         self.SendTab.setTabText(self.SendTab.indexOf(self.guide), QCoreApplication.translate("MainWindow", u"Guide", None))
-        self.groupBox_21.setTitle(QCoreApplication.translate("MainWindow", u"Receive", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Receive", None))
         self.checkBox_RHexmode.setText(QCoreApplication.translate("MainWindow", u"HexMode", None))
         self.pushButton_RClear.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.pushButton_RSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
