@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'about.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,20 +22,20 @@ class Ui_About(object):
     def setupUi(self, About):
         if not About.objectName():
             About.setObjectName(u"About")
-        About.resize(380, 210)
+        About.resize(400, 250)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(About.sizePolicy().hasHeightForWidth())
         About.setSizePolicy(sizePolicy)
-        About.setMinimumSize(QSize(380, 210))
-        About.setMaximumSize(QSize(380, 210))
+        About.setMinimumSize(QSize(400, 250))
+        About.setMaximumSize(QSize(400, 250))
         font = QFont()
         font.setPointSize(10)
         About.setFont(font)
         self.textEdit_About = QTextEdit(About)
         self.textEdit_About.setObjectName(u"textEdit_About")
-        self.textEdit_About.setGeometry(QRect(0, 0, 381, 211))
+        self.textEdit_About.setGeometry(QRect(0, 0, 401, 251))
         sizePolicy.setHeightForWidth(self.textEdit_About.sizePolicy().hasHeightForWidth())
         self.textEdit_About.setSizePolicy(sizePolicy)
         self.textEdit_About.setFont(font)

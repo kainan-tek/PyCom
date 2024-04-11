@@ -1,4 +1,7 @@
 Release Note:
+v1.2.5:
+    optimize ui.
+
 v1.2.4:
     update pyside6 version: v6.6.2
 
