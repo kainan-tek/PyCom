@@ -15,7 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QSizePolicy, QTextEdit, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QSizePolicy, QTextEdit,
+    QWidget)
 
 
 class Ui_About(object):
@@ -35,11 +36,13 @@ class Ui_About(object):
         About.setFont(font)
         self.textEdit_About = QTextEdit(About)
         self.textEdit_About.setObjectName(u"textEdit_About")
-        self.textEdit_About.setGeometry(QRect(0, 0, 401, 251))
+        self.textEdit_About.setGeometry(QRect(0, 0, 399, 249))
         sizePolicy.setHeightForWidth(self.textEdit_About.sizePolicy().hasHeightForWidth())
         self.textEdit_About.setSizePolicy(sizePolicy)
         self.textEdit_About.setFont(font)
         self.textEdit_About.setStyleSheet(u"background-color: rgb(231, 234, 237);")
+        self.textEdit_About.setFrameShape(QFrame.Shape.NoFrame)
+        self.textEdit_About.setFrameShadow(QFrame.Shadow.Plain)
         self.textEdit_About.setReadOnly(True)
 
         self.retranslateUi(About)

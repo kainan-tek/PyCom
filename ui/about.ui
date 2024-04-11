@@ -41,8 +41,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>401</width>
-     <height>251</height>
+     <width>399</width>
+     <height>249</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -58,6 +58,12 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(231, 234, 237);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Plain</enum>
    </property>
    <property name="readOnly">
     <bool>true</bool>
