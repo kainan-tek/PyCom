@@ -2,7 +2,7 @@
 ***A python GUI tool for serial communication***   
 
 ## Dependencies:
-python v3.11.8  
+python v3.11.9  
 pyside6  pyserial  chardet   
 
 ## Dependencies install cmd:
@@ -18,7 +18,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ## pack with nuitka
 ```C
 // install nuitka  
-pip install nuitka==2.1.5 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install nuitka==2.2.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
 // generate exe
 nuitka --mingw64 --standalone --follow-imports --windows-disable-console --show-progress --show-memory --enable-plugin=pyside6 --windows-icon-from-ico=.\resrc\images\pycom.ico --include-data-dir=./demo=./demo --include-data-files=./ReleaseNote.txt=ReleaseNote.txt pycom.py
 // run the executable file: pycom.exe
@@ -27,7 +27,7 @@ nuitka --mingw64 --standalone --follow-imports --windows-disable-console --show-
 ## pack with pyinstaller
 ```C
 // install pyinstaller  
-pip install pyinstaller==6.5.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install pyinstaller==6.6.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
 // generate exe
 pyinstaller --onefile --noconsole --clean -i ./resrc/images/pycom.ico pycom.py
 ```

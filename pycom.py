@@ -10,11 +10,10 @@ import serial
 import serial.tools.list_ports
 from PySide6.QtCore import QEvent, QMutex, QThread, QTimer, Signal
 from PySide6.QtGui import QIcon, QIntValidator, Qt, QTextCursor
-from PySide6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
-                               QMessageBox)
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 
 import globalvar as gl
-import resrc.resource_rc as res
+import resrc.resource_rc
 from about import About
 from jsonparser import JsonFlag, JsonParser
 from logwrapper import log_inst
@@ -22,7 +21,17 @@ from ui.mainwindow_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):
+    """The main window of the application.
+
+    This class is used to initialize the UI, and handle the events
+    of the UI components.
+    """
+
     def __init__(self):
+        """Constructor of the main window class.
+
+        Initialize the UI, and set up the logger.
+        """
         super(MainWindow, self).__init__()
         self.log = log_inst.logger
         self.ui = Ui_MainWindow()
@@ -33,19 +42,24 @@ class MainWindow(QMainWindow):
         self.parse_ports()
 
     def var_init(self):
-        self.total_sendsize = 0
-        self.total_recsize = 0
-        self.datasize_text = ""
-        self.recdatas_file = ""
-        self.encode_info = "gbk"
-        self.multi_dict = {}
-        self.js_send_list = []
-        self.mutex = QMutex()
-        self.msgbox = QMessageBox()
-        self.ser_instance = serial.Serial()
-        self.send_timer = QTimer()
+        """Initialize the class variables
+
+        Initialize the UI related variables, and set up the serial port
+        instance and the worker thread for data receiving.
+        """
+        self.total_sendsize = 0  # The total send size
+        self.total_recsize = 0  # The total received size
+        self.datasize_text = ""  # The text to show the send/receive size
+        self.recdatas_file = ""  # The file name of the received data
+        self.encode_info = "gbk"  # The encoding of the received data
+        self.multi_dict = {}  # The dictionary of the multiple send data
+        self.js_send_list = []  # The list of the json file data
+        self.mutex = QMutex()  # The mutex for the data sending
+        self.msgbox = QMessageBox()  # The message box instance
+        self.ser_instance = serial.Serial()  # The serial port instance
+        self.send_timer = QTimer()  # The timer for the data sending
         self.send_timer.timeout.connect(self.data_send)
-        self.fsend_timer = QTimer()
+        self.fsend_timer = QTimer()  # The timer for the json file data sending
         self.fsend_timer.timeout.connect(self.jsfile_data_send)
         self.recthread = WorkThread(self.ser_instance)
         self.recthread.rec_signal.connect(self.update_receive_ui)
@@ -58,10 +72,15 @@ class MainWindow(QMainWindow):
                            Qt.Key_Control, Qt.Key_Shift, Qt.Key_Copy, Qt.Key_Paste]
 
     def gui_init(self):
+        """Initialize the GUI.
+
+        Set up the window title, icon, menu and status bar, and connect the signals.
+        """
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
         self.setWindowIcon(QIcon(":/icon/pycom"))
 
         # menu set up
+        """Connect the actions in the menu to the corresponding functions."""
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
         self.ui.actionExit.triggered.connect(self.action_exit)
         self.ui.actionASCII.triggered.connect(self.action_encoding_ascii)
@@ -72,6 +91,7 @@ class MainWindow(QMainWindow):
         self.ui.actionAbout.triggered.connect(self.action_about)
 
         # serial port set up
+        """Set up the serial port options in the GUI."""
         self.ui.comboBox_BRate.addItems(gl.SerialInfo["baudrate"])
         self.ui.comboBox_BRate.setCurrentText('115200')
         self.ui.comboBox_BSize.addItems(gl.SerialInfo["bytesize"])
@@ -87,6 +107,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_Close.setEnabled(False)
 
         # single send set up
+        """Set up the single send options in the GUI."""
         self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
         self.ui.pushButton_sSend.clicked.connect(self.single_data_send)
         self.ui.pushButton_sClear.clicked.connect(self.send_clear)
@@ -99,6 +120,7 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_sCycle.setValidator(QIntValidator())
 
         # multi send set up
+        """Set up the multiple send options in the GUI."""
         self.ui.pushButton_m1.clicked.connect(self.multi_send_m1)
         self.ui.pushButton_m2.clicked.connect(self.multi_send_m2)
         self.ui.pushButton_m3.clicked.connect(self.multi_send_m3)
@@ -109,17 +131,21 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_mCycle.setValidator(QIntValidator())
 
         # file send set up
+        """Set up the send file options in the GUI."""
         self.ui.pushButton_fSelect.clicked.connect(self.file_send_select)
         self.ui.pushButton_fSend.clicked.connect(self.file_send)
 
         # guide set up
+        """Set up the guide information in the GUI."""
         self.ui.plainTextEdit_Guide.setStyleSheet(u"background-color: rgb(231, 234, 237);")
         self.ui.plainTextEdit_Guide.setPlainText(gl.GuideInfo)
 
         # receive set up
+        """Set up the receive data options in the GUI."""
         self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
 
         # statusbar set up
+        """Set up the data size status bar in the GUI."""
         self.datasize_text = "  Send: 0  |  Receive: 0  "
         self.label_rwsize = QLabel(self.datasize_text)
         self.label_rwsize.setStyleSheet("color:blue")
@@ -128,6 +154,7 @@ class MainWindow(QMainWindow):
 ########################## port function ############################
 
     def parse_ports(self):
+        """Parse the serial port options in the GUI."""
         if self.ser_instance.isOpen():
             self.msgbox.information(self, "Info", "Please close port first")
             return False
@@ -137,6 +164,7 @@ class MainWindow(QMainWindow):
         self.ui.comboBox_SPort.addItems(ports_list)
 
     def open_port(self):
+        """Open the serial port with the set up options in the GUI."""
         self.ser_instance.port = self.ui.comboBox_SPort.currentText().strip()
         self.ser_instance.baudrate = int(self.ui.comboBox_BRate.currentText().strip())
         self.ser_instance.bytesize = int(self.ui.comboBox_BSize.currentText().strip())
@@ -163,6 +191,7 @@ class MainWindow(QMainWindow):
             self.ui.pushButton_Close.setEnabled(True)
 
     def close_port(self):
+        """Close the serial port."""
         if self.ui.checkBox_sCycle.isChecked():
             self.ui.checkBox_sCycle.click()
         if self.ui.checkBox_mCycle.isChecked():
@@ -173,6 +202,7 @@ class MainWindow(QMainWindow):
             # self.ser_instance.close()  # the serial readall function in receive thread may crash
 
     def post_close_port(self):
+        """Post close the serial port."""
         if not self.ser_instance.isOpen():
             self.ui.pushButton_Open.setEnabled(True)
             self.ui.pushButton_Close.setEnabled(False)
@@ -180,6 +210,7 @@ class MainWindow(QMainWindow):
 ########################## single and multi send function ############################
 
     def data_send(self):
+        """Send data to the serial port."""
         if self.ui.checkBox_sCycle.isChecked() and self.ui.checkBox_mCycle.isChecked():
             self.ui.checkBox_sCycle.click()
             self.ui.checkBox_mCycle.click()
@@ -192,7 +223,8 @@ class MainWindow(QMainWindow):
         elif self.ui.checkBox_mCycle.isChecked():
             self.multi_cycle_send()
 
-    def is_send_hex_mode(self, text):
+    def is_send_hex_mode(self, text) -> bool:
+        """Check if the text is in hex mode."""
         post_text = text.replace(" ", "")
         if not len(post_text) % 2 == 0:
             return False
@@ -203,11 +235,13 @@ class MainWindow(QMainWindow):
 ########################## single send function ############################
 
     def send_clear(self):
+        """Clear the text in the send text edit."""
         self.ui.textEdit_sSend.clear()
         self.total_sendsize = 0
         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def single_data_send(self):
+        """Send data to the serial port."""
         int_list = []
         newline_state = self.ui.checkBox_sNewline.isChecked()
         text = self.ui.textEdit_sSend.toPlainText()
@@ -246,6 +280,7 @@ class MainWindow(QMainWindow):
         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def send_set_cyclemode(self):
+        """Set the cycle send mode."""
         if self.ui.checkBox_sCycle.isChecked():
             msg = ""
             cycle_text = self.ui.lineEdit_sCycle.text()
@@ -269,6 +304,7 @@ class MainWindow(QMainWindow):
             self.ui.lineEdit_sCycle.setEnabled(True)
 
     def send_set_hexmode(self):
+        """Set the hex mode."""
         hexmode_state = self.ui.checkBox_sHexmode.isChecked()
         text = self.ui.textEdit_sSend.toPlainText()
         if not text:
@@ -285,6 +321,7 @@ class MainWindow(QMainWindow):
         self.ui.textEdit_sSend.insertPlainText(str_text)
 
     def eventFilter(self, obj, event):
+        """Event filter for the send text edit."""
         if event.type() == QEvent.KeyPress and obj is self.ui.textEdit_sSend and self.ui.checkBox_sHexmode.isChecked():
             if not event.key() in self.key_limits and not (event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_V):
                 self.msgbox.warning(self, "Warning", "Hex mode now!\nPlease input 0-9, a-f, A-F")
@@ -312,6 +349,7 @@ class MainWindow(QMainWindow):
         self.mx_common_send("6", self.ui.lineEdit_m6)
 
     def mx_common_send(self, seq, line_edit):
+        """Common send function."""
         int_list = []
         text = line_edit.text()
         newline_state = self.ui.checkBox_mNewLine.isChecked()
@@ -348,6 +386,7 @@ class MainWindow(QMainWindow):
         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def multi_cycle_send(self):
+        """Multi send with cycle."""
         self.multi_dict["m1"][0] = 1 if self.ui.checkBox_m1.isChecked() and self.ui.lineEdit_m1.text() else 0
         self.multi_dict["m2"][0] = 1 if self.ui.checkBox_m2.isChecked() and self.ui.lineEdit_m2.text() else 0
         self.multi_dict["m3"][0] = 1 if self.ui.checkBox_m3.isChecked() and self.ui.lineEdit_m3.text() else 0
@@ -371,6 +410,7 @@ class MainWindow(QMainWindow):
                 self.multi_dict[item][1] = 0
 
     def multi_send_set_cyclemode(self):
+        """Set cycle mode."""
         if self.ui.checkBox_mCycle.isChecked():
             msg = ""
             cycle_text = self.ui.lineEdit_mCycle.text()
@@ -393,6 +433,7 @@ class MainWindow(QMainWindow):
 ########################## file send function ############################
 
     def file_send_select(self):
+        """Select file to send."""
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setViewMode(QFileDialog.Detail)
@@ -409,12 +450,14 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_fFile.setText(file_name)
 
     def predict_encoding(self, file):
+        """Predict encoding of file."""
         with open(file, 'rb') as f:
             encodeinfo = chardet.detect(f.read())
         # print(encodeinfo['encoding'])
         return encodeinfo['encoding']
 
     def file_send(self):
+        """Send file."""
         if not self.ser_instance.isOpen():
             self.msgbox.information(self, "Info", "Please open serial port first")
             return False
@@ -481,6 +524,7 @@ class MainWindow(QMainWindow):
                 self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def jsfile_data_send(self):
+        """Send json file data."""
         for item in self.js_send_list:
             if item[0] == 1 and item[2] == 0:  # selected and not sent
                 if item[1] == 1:  # hex mode
@@ -497,6 +541,7 @@ class MainWindow(QMainWindow):
 ########################## receive function ############################
 
     def receive_set_hexmode(self):
+        """Receive set hex mode."""
         self.mutex.lock()
         hexmode_state = self.ui.checkBox_RHexmode.isChecked()
         text = self.ui.textEdit_Receive.toPlainText()
@@ -513,6 +558,7 @@ class MainWindow(QMainWindow):
         self.mutex.unlock()
 
     def update_receive_ui(self):
+        """Update receive ui."""
         self.mutex.lock()
         if not self.recthread.recqueue.empty():
             recdatas = self.recthread.recqueue.get_nowait()
@@ -532,6 +578,7 @@ class MainWindow(QMainWindow):
         self.mutex.unlock()
 
     def receive_save(self):
+        """Receive save."""
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setViewMode(QFileDialog.Detail)
@@ -553,17 +600,20 @@ class MainWindow(QMainWindow):
             return False
 
     def receive_clear(self):
+        """Receive clear."""
         self.ui.textEdit_Receive.clear()
         self.total_recsize = 0
         self.update_rwsize_status(self.total_sendsize, self.total_recsize)
 
     def update_rwsize_status(self, send_sz, rec_sz):
+        """Update receive and send size status."""
         self.datasize_text = f"  Send: {send_sz}  |  Receive: {rec_sz}  "
         self.label_rwsize.setText(self.datasize_text)
 
 ########################## menu function ############################
 
     def action_open_file(self):
+        """Open file."""
         if not os.path.exists(self.recdatas_file):
             self.msgbox.information(self, "Info", "Please save a receive datas file first")
             return False
@@ -573,6 +623,7 @@ class MainWindow(QMainWindow):
             os.system(f'xdg-open {os.path.dirname(self.recdatas_file)}')
 
     def action_exit(self):
+        """Exit the application."""
         if self.recthread.isRunning():
             self.recthread.requestInterruption()
             self.recthread.quit()
@@ -599,14 +650,20 @@ class MainWindow(QMainWindow):
         self.set_encoding("gbk")
 
     def set_encoding(self, encode):
-        self.ui.actionASCII.setChecked(True if encode == "ascii" else False)
-        self.ui.actionUTF_8.setChecked(True if encode == "utf-8" else False)
-        self.ui.actionUTF_16.setChecked(True if encode == "utf-16" else False)
-        self.ui.actionUTF_32.setChecked(True if encode == "utf-32" else False)
-        self.ui.actionGBK_GB2312.setChecked(True if encode == "gbk" else False)
+        """Set the encoding for the receive and send data.
+
+        Arguments:
+            encode: The encoding to be set, in the format of str, such as "ascii", "utf-8", "utf-16", "utf-32", "gbk".
+        """
+        self.ui.actionASCII.setChecked(True if encode == "ascii" else False)  # type: ignore
+        self.ui.actionUTF_8.setChecked(True if encode == "utf-8" else False)  # type: ignore
+        self.ui.actionUTF_16.setChecked(True if encode == "utf-16" else False)  # type: ignore
+        self.ui.actionUTF_32.setChecked(True if encode == "utf-32" else False)  # type: ignore
+        self.ui.actionGBK_GB2312.setChecked(True if encode == "gbk" else False)  # type: ignore
         self.encode_info = encode
 
     def closeEvent(self, event):
+        """Close the application."""
         if self.recthread.isRunning():
             self.recthread.requestInterruption()
             self.recthread.quit()
@@ -618,6 +675,7 @@ class MainWindow(QMainWindow):
 ########################## Sub-thread for receiving data ############################
 
 class WorkThread(QThread):
+    """The sub-thread for receiving data."""
     rec_signal = Signal()
     close_signal = Signal()
 
@@ -645,10 +703,18 @@ class WorkThread(QThread):
 
 
 def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    """Main function to run the PyCOM application.
+
+    This function creates a QApplication object and a MainWindow
+    object. It shows the main window and runs the event loop.
+
+    Returns:
+        int: The exit code of the QApplication.
+    """
+    app = QApplication(sys.argv)  # create a QApplication object
+    window = MainWindow()  # create a MainWindow object
+    window.show()  # show the main window
+    return app.exec()  # run the event loop and exit with the app's exit code
 
 
 if __name__ == "__main__":

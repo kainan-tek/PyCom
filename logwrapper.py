@@ -11,29 +11,47 @@ LogInfo = {"reldir": "log/pycom",
 
 class Log:
     def __init__(self):
+        """
+        Create a Log instance.
+
+        Initialize the logger and its handlers.
+        The logger is the root logger.
+
+        Log to console (StreamHandler) and log file (RotatingFileHandler).
+        """
+        # Create the directory to store the log file.
         log_dirname = os.path.join(os.path.expanduser('~'), LogInfo["reldir"])
         if not os.path.exists(log_dirname):
             os.makedirs(log_dirname, exist_ok=True)
 
-        # time_now = time.strftime("%Y-%m-%d--%H-%M-%S")
+        # Set the log file name and formatter.
+        # Use the normpath function to avoid any potential issues with the '/'
+        # character on Windows systems.
         logname = os.path.normpath(os.path.join(log_dirname, LogInfo["basename"]))
         formatter = logging.Formatter('%(asctime)s - %(filename)s:%(lineno)d - [%(levelname)s] - %(message)s')
 
+        # Get the root logger
         self.logger = logging.getLogger()
+
+        # Set the log level
         self.logger.setLevel(logging.DEBUG)
 
+        # Create a StreamHandler to log to console
         ch = logging.StreamHandler()
-        # fh = logging.FileHandler(logname, 'a', encoding='utf-8')
-        rfh = RotatingFileHandler(filename=logname, mode='a',
-                                  maxBytes=LogInfo["filesize"], backupCount=LogInfo["fbkcount"], encoding='utf-8')
-        # fh = logging.handlers.TimedRotatingFileHandler(
-        #     filename=logname, when='D', interval=1, backupCount=10, encoding='utf-8')
-        # fh.suffix = "%Y%m%d-%H%M.log"
+        # Set the log level for the console handler
         ch.setLevel(logging.INFO)
-        rfh.setLevel(logging.INFO)
+        # Set the formatter for the console handler
         ch.setFormatter(formatter)
+
+        # Create a RotatingFileHandler to log to file
+        rfh = RotatingFileHandler(filename=logname, mode='a',  # file handler
+                                  maxBytes=LogInfo["filesize"], backupCount=LogInfo["fbkcount"], encoding='utf-8')
+        # Set the log level for the file handler
+        rfh.setLevel(logging.INFO)
+        # Set the formatter for the file handler
         rfh.setFormatter(formatter)
 
+        # Add the handlers to the logger
         self.logger.addHandler(ch)
         self.logger.addHandler(rfh)
 
