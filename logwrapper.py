@@ -44,7 +44,7 @@ class Log:
         ch.setFormatter(formatter)
 
         # Create a RotatingFileHandler to log to file
-        rfh = RotatingFileHandler(filename=logname, mode='a',  # file handler
+        rfh = RotatingFileHandler(filename=logname, mode='a',
                                   maxBytes=LogInfo["filesize"], backupCount=LogInfo["fbkcount"], encoding='utf-8')
         # Set the log level for the file handler
         rfh.setLevel(logging.INFO)

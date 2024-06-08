@@ -1,4 +1,7 @@
 Release Note:
+v1.2.6:
+    change pycom.py to main.py.
+
 v1.2.5:
     optimize ui.
 
