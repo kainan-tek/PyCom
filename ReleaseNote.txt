@@ -1,4 +1,7 @@
 Release Note:
+v1.2.7:
+    update python version: v3.12.4
+
 v1.2.6:
     change pycom.py to main.py.
 
