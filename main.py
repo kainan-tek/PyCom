@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
         """
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
         self.setWindowIcon(QIcon(":/icon/pycom"))
+        # self.setStyleSheet("QPushButton::hover{background-color: rgb(234, 236, 238)};")
 
         # menu set up
         """Connect the actions in the menu to the corresponding functions."""
@@ -108,7 +109,7 @@ class MainWindow(QMainWindow):
 
         # single send set up
         """Set up the single send options in the GUI."""
-        self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
+        # self.ui.textEdit_sSend.setStyleSheet(u"background-color: rgb(199, 237, 204);")
         self.ui.pushButton_sSend.clicked.connect(self.single_data_send)
         self.ui.pushButton_sClear.clicked.connect(self.send_clear)
         self.ui.pushButton_RClear.clicked.connect(self.receive_clear)
@@ -137,12 +138,8 @@ class MainWindow(QMainWindow):
 
         # guide set up
         """Set up the guide information in the GUI."""
-        self.ui.plainTextEdit_Guide.setStyleSheet(u"background-color: rgb(231, 234, 237);")
+        # self.ui.plainTextEdit_Guide.setStyleSheet(u"background-color: rgb(231, 234, 237);")
         self.ui.plainTextEdit_Guide.setPlainText(gl.GuideInfo)
-
-        # receive set up
-        """Set up the receive data options in the GUI."""
-        self.ui.textEdit_Receive.setStyleSheet(u"background-color: rgb(199, 237, 204);")
 
         # statusbar set up
         """Set up the data size status bar in the GUI."""
@@ -655,11 +652,11 @@ class MainWindow(QMainWindow):
         Arguments:
             encode: The encoding to be set, in the format of str, such as "ascii", "utf-8", "utf-16", "utf-32", "gbk".
         """
-        self.ui.actionASCII.setChecked(True if encode == "ascii" else False)  # type: ignore
-        self.ui.actionUTF_8.setChecked(True if encode == "utf-8" else False)  # type: ignore
-        self.ui.actionUTF_16.setChecked(True if encode == "utf-16" else False)  # type: ignore
-        self.ui.actionUTF_32.setChecked(True if encode == "utf-32" else False)  # type: ignore
-        self.ui.actionGBK_GB2312.setChecked(True if encode == "gbk" else False)  # type: ignore
+        self.ui.actionASCII.setChecked(True if encode == "ascii" else False)
+        self.ui.actionUTF_8.setChecked(True if encode == "utf-8" else False)
+        self.ui.actionUTF_16.setChecked(True if encode == "utf-16" else False)
+        self.ui.actionUTF_32.setChecked(True if encode == "utf-32" else False)
+        self.ui.actionGBK_GB2312.setChecked(True if encode == "gbk" else False)
         self.encode_info = encode
 
     def closeEvent(self, event):
