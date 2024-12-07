@@ -1,6 +1,6 @@
 Release Note:
 v1.2.8:
-    update python version: v3.13.0
+    update python version: v3.13.1
 
 v1.2.7:
     update python version: v3.12.4

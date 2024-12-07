@@ -13,19 +13,19 @@ class JsonFlag(Enum):
 
 class JsonParser():
     def __init__(self, _file):
-        self.file = _file
+        self.file: str = _file
 
-    def file_read(self, encode="utf-8") -> tuple[JsonFlag, dict]:
+    def file_read(self, encode: str = "utf-8") -> tuple[JsonFlag, dict]:
         """
-        Read json dict from file.
+        Read json file and return the json dict.
 
-        Parameters:
-            encode (str): encoding of the file, default is "utf-8"
+        Args:
+            encode (str): encoding of the file
 
         Returns:
-            (JsonFlag, dict): result flag and json dict
+            tuple[JsonFlag, dict]: result flag and the json dict
         """
-        json_dict = {}
+        json_dict: dict = {}
 
         if not os.path.exists(self.file):
             return JsonFlag.NO_FILE, json_dict  # file not exists, return no file flag
@@ -41,14 +41,16 @@ class JsonParser():
 
         return JsonFlag.SUCCESS, json_dict  # read json successfully, return success flag
 
-    def file_write(self, _json_dict={}, encode="utf-8") -> JsonFlag:
+    def file_write(self, _json_dict: dict = {}, encode: str = "utf-8") -> JsonFlag:
         """
-        Write json dict to file.
-        Parameters:
-            _json_dict: dict, json dict to write
-            encode: str, encoding of the file
+        Write a json dict into a file.
+
+        Args:
+            _json_dict (dict, optional): The json dict to be written. Defaults to {}.
+            encode (str, optional): The encoding of the file. Defaults to "utf-8".
+
         Returns:
-            JsonFlag, result flag
+            JsonFlag: The result of writing the json dict.
         """
         if not os.path.exists(self.file):
             return JsonFlag.NO_FILE  # file not exists, return no file flag

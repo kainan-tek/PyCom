@@ -10,48 +10,42 @@ LogInfo = {"reldir": "log/pycom",
 
 
 class Log:
-    def __init__(self):
+    def __init__(self) -> None:
         """
-        Create a Log instance.
+        Initialize the Log class.
 
-        Initialize the logger and its handlers.
-        The logger is the root logger.
+        Creates the necessary directory for storing log files, sets up the
+        logger, and adds handlers for console and file logging.
 
-        Log to console (StreamHandler) and log file (RotatingFileHandler).
+        Args:
+            None
+
+        Returns:
+            None
         """
-        # Create the directory to store the log file.
-        log_dirname = os.path.join(os.path.expanduser('~'), LogInfo["reldir"])
+        log_dirname: str = os.path.join(os.path.expanduser('~'), LogInfo["reldir"])
         if not os.path.exists(log_dirname):
             os.makedirs(log_dirname, exist_ok=True)
 
-        # Set the log file name and formatter.
-        # Use the normpath function to avoid any potential issues with the '/'
-        # character on Windows systems.
-        logname = os.path.normpath(os.path.join(log_dirname, LogInfo["basename"]))
-        formatter = logging.Formatter('%(asctime)s - %(filename)s:%(lineno)d - [%(levelname)s] - %(message)s')
+        logname: str = os.path.normpath(os.path.join(log_dirname, LogInfo["basename"]))
+        formatter: logging.Formatter = logging.Formatter(
+            '%(asctime)s - %(filename)s:%(lineno)d - [%(levelname)s] - %(message)s'
+        )
 
-        # Get the root logger
-        self.logger = logging.getLogger()
-
-        # Set the log level
+        self.logger: logging.Logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)
 
-        # Create a StreamHandler to log to console
-        ch = logging.StreamHandler()
-        # Set the log level for the console handler
+        ch: logging.StreamHandler = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        # Set the formatter for the console handler
         ch.setFormatter(formatter)
 
-        # Create a RotatingFileHandler to log to file
-        rfh = RotatingFileHandler(filename=logname, mode='a',
-                                  maxBytes=LogInfo["filesize"], backupCount=LogInfo["fbkcount"], encoding='utf-8')
-        # Set the log level for the file handler
+        rfh: logging.handlers.RotatingFileHandler = logging.handlers.RotatingFileHandler(
+            filename=logname, mode='a', maxBytes=LogInfo["filesize"],
+            backupCount=LogInfo["fbkcount"], encoding='utf-8'
+        )
         rfh.setLevel(logging.INFO)
-        # Set the formatter for the file handler
         rfh.setFormatter(formatter)
 
-        # Add the handlers to the logger
         self.logger.addHandler(ch)
         self.logger.addHandler(rfh)
 
