@@ -18,6 +18,7 @@ from about import About
 from jsonparser import JsonFlag, JsonParser
 from logwrapper import log_inst
 from ui.mainwindow_ui import Ui_MainWindow
+from switchbt import SwitchButton
 
 
 class MainWindow(QMainWindow):
@@ -101,6 +102,21 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f'{gl.GuiInfo["proj"]} {gl.GuiInfo["version"]}')
         self.setWindowIcon(QIcon(":/icon/pycom"))
 
+        if 1:
+            # enable switch button
+            self.ui.pushButton_Open.setHidden(True)
+            self.ui.pushButton_Close.setHidden(True)
+            self.switchBt_OnOff = SwitchButton(self.ui.groupBox)
+            self.switchBt_OnOff.setGeometry(85, 265, 90, 30)
+            self.switchBt_OnOff.toggled.connect(self.port_toggle)
+        else:
+            # disable switch button
+            self.ui.label_switch.setHidden(True)
+            self.ui.pushButton_Open.clicked.connect(self.open_port)  # Connect open button
+            self.ui.pushButton_Close.clicked.connect(self.close_port)  # Connect close button
+            self.ui.pushButton_Open.setEnabled(True)  # Enable open button
+            self.ui.pushButton_Close.setEnabled(False)  # Disable close button
+
         # Menu setup: connect actions to corresponding functions
         self.ui.actionOpen_File.triggered.connect(self.action_open_file)
         self.ui.actionExit.triggered.connect(self.action_exit)
@@ -121,10 +137,6 @@ class MainWindow(QMainWindow):
         self.ui.comboBox_PBit.addItems(gl.SerialInfo["paritybit"])  # Add parity bit options
         self.ui.comboBox_PBit.setCurrentText('None')  # Set default parity bit
         self.ui.pushButton_Check.clicked.connect(self.parse_ports)  # Connect check button
-        self.ui.pushButton_Open.clicked.connect(self.open_port)  # Connect open button
-        self.ui.pushButton_Close.clicked.connect(self.close_port)  # Connect close button
-        self.ui.pushButton_Open.setEnabled(True)  # Enable open button
-        self.ui.pushButton_Close.setEnabled(False)  # Disable close button
 
         # Single send setup: connect single send options
         self.ui.pushButton_sSend.clicked.connect(self.single_data_send)
@@ -200,6 +212,66 @@ class MainWindow(QMainWindow):
         self.ui.comboBox_SPort.addItems(ports_list)
         return True
 
+    # if enable switch button
+    def port_toggle(self) -> None:
+        """
+        Toggle the switch button to open or close the serial port.
+
+        This function is called when the switch button is clicked. If the switch
+        button is checked, it will open the serial port with the settings in the
+        combo boxes. If the switch button is unchecked, it will close the serial
+        port if it is open.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.switchBt_OnOff.isChecked():
+            self.ui.pushButton_Check.setDisabled(True)
+            self.ser_instance.port = self.ui.comboBox_SPort.currentText().strip()
+            self.ser_instance.baudrate = int(self.ui.comboBox_BRate.currentText().strip())
+            self.ser_instance.bytesize = int(self.ui.comboBox_BSize.currentText().strip())
+            self.ser_instance.stopbits = int(self.ui.comboBox_SBit.currentText().strip())
+            self.ser_instance.parity = self.ui.comboBox_PBit.currentText().strip()[0]
+            self.ser_instance.timeout = gl.SerialInfo["timeout"]
+
+            if not self.ser_instance.port:
+                self.msgbox.information(self, "Info", "No port be selected")
+                return
+
+            if not self.ser_instance.isOpen():
+                try:
+                    self.ser_instance.open()
+                except Exception as err:
+                    self.log.error(f"Error of opening port, err: {str(err)}")
+                    if "PermissionError" in str(err):
+                        self.msgbox.critical(self, "PermissionError", "The selected port may be occupied!")
+                    else:
+                        self.msgbox.critical(self, "Error", "Can not open the port with these params")
+                    return
+        else:
+            self.ui.pushButton_Check.setEnabled(True)
+            # Check and deactivate single cycle send if active
+            if self.ui.checkBox_sCycle.isChecked():
+                self.ui.checkBox_sCycle.click()
+
+            # Check and deactivate multi cycle send if active
+            if self.ui.checkBox_mCycle.isChecked():
+                self.ui.checkBox_mCycle.click()
+
+            # Stop the file send timer
+            self.fsend_timer.stop()
+
+            # Check if the serial instance is open
+            if self.ser_instance.isOpen():
+                # Trigger the serial close function in receive thread
+                self.recthread.port_close_flag = True
+                # Note: Closing the serial directly here may cause a crash
+                # self.ser_instance.close()
+
+    # if disable switch button
     def open_port(self) -> bool:
         """
         Open the serial port.
